@@ -35,6 +35,8 @@ export default function Login({ navigation }) {
   const handleLogin = () => {
     axios(options)
       .then((response) => {
+        save("email", email);
+        save("password", password);
         save("access_token", JSON.stringify(response.data));
         setToken(JSON.stringify(response.data));
       })
