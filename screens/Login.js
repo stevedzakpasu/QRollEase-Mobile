@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,13 +6,15 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { save } from "../hooks/SecureStore";
 
 import axios from "axios";
-import { accessToken, getAccessToken } from "../hooks/LocalStorage";
+import { AppContext } from "../context/AppContext";
+
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const { token, setToken } = useContext(AppContext);
   const options = {
     method: "POST",
     url: "http://qrollease-api-112d897b35ef.herokuapp.com/api/login/access-token",
@@ -33,17 +35,11 @@ export default function Login({ navigation }) {
   const handleLogin = () => {
     axios(options)
       .then((response) => {
-        accessToken("access_token", JSON.stringify(response.data.access_token));
+        save("access_token", JSON.stringify(response.data));
+        setToken(JSON.stringify(response.data));
       })
       .catch((error) => {
         console.log(error);
-      })
-      .finally(() => {
-        console.log(
-          getAccessToken("access_token").then((res) =>
-            console.log(`token: ${res}`)
-          )
-        );
       });
   };
   return (

@@ -3,14 +3,19 @@ import { BottomTabs } from "./navigators/BottomTabs";
 import { useCallback, useEffect, useState } from "react";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-
-SplashScreen.preventAutoHideAsync();
+import { UnauthenticatedStack } from "./navigators/Stacks";
+import { save, getValueFor } from "./hooks/SecureStore";
+import { AppContext } from "./context/AppContext";
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [token, setToken] = useState(null);
   useEffect(() => {
     async function loadFonts() {
       try {
+        await getValueFor("access_token").then((res) => {
+          setToken(res);
+        });
         await SplashScreen.preventAutoHideAsync();
         await Font.loadAsync({
           bold: require("./assets/fonts/Montserrat-Bold.ttf"),
@@ -39,7 +44,9 @@ export default function App() {
 
   return (
     <NavigationContainer onReady={onLayoutRootView}>
-      <BottomTabs />
+      <AppContext.Provider value={{ token, setToken }}>
+        {!token ? <UnauthenticatedStack /> : <BottomTabs />}
+      </AppContext.Provider>
     </NavigationContainer>
   );
 }
