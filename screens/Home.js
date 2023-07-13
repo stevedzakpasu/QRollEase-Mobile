@@ -3,16 +3,20 @@ import React from "react";
 
 export default function Home() {
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "white",
+      }}
+    >
       <Text
         style={{
-          marginTop: 50,
-          textAlign: "center",
-          alignItems: "center",
-          justifyContent: "center",
+          fontSize: 50,
+          fontFamily: "medium",
+          color: "#328f8a",
         }}
       >
-        Homehtdefnggggggggggggggggggggggggggggg
+        Home
       </Text>
     </View>
   );

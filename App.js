@@ -43,6 +43,11 @@ export default function App() {
         await SplashScreen.preventAutoHideAsync();
         await Font.loadAsync({
           bold: require("./assets/fonts/Montserrat-Bold.ttf"),
+          light: require("./assets/fonts/Montserrat-Light.ttf"),
+          medium: require("./assets/fonts/Montserrat-Medium.ttf"),
+          regular: require("./assets/fonts/Montserrat-Regular.ttf"),
+          semibold: require("./assets/fonts/Montserrat-SemiBold.ttf"),
+          thin: require("./assets/fonts/Montserrat-Thin.ttf"),
         });
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -56,21 +61,19 @@ export default function App() {
     getAppReady();
   }, []);
 
-  useEffect(() => {
-    async function updateAccessToken() {
-      try {
-        axios(options).then((response) => {
-          save("access_token", JSON.stringify(response.data));
-          setToken(JSON.stringify(response.data));
-        });
-      } catch {
-        (error) => {
-          console.log(error);
-        };
-      }
+  const updateAccessToken = useCallback(async () => {
+    try {
+      const response = await axios(options);
+      save("access_token", JSON.stringify(response.data));
+      setToken(JSON.stringify(response.data));
+    } catch (error) {
+      console.log(error);
     }
+  }, []); // Empty dependency array indicates that the callback doesn't depend on any external variables
+
+  useEffect(() => {
     if (email) updateAccessToken();
-  }, []);
+  }, [updateAccessToken, email]);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -84,7 +87,7 @@ export default function App() {
 
   return (
     <NavigationContainer onReady={onLayoutRootView}>
-      <AppContext.Provider value={{ token, setToken }}>
+      <AppContext.Provider value={{ token, setToken, updateAccessToken }}>
         {!token ? <UnauthenticatedStack /> : <BottomTabs />}
       </AppContext.Provider>
     </NavigationContainer>
