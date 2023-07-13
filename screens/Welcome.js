@@ -12,23 +12,31 @@ export default function Welcome({ navigation }) {
   return (
     <View
       style={{
-        marginTop: StatusBar.currentHeight,
         flex: 1,
         backgroundColor: "white",
         justifyContent: "space-evenly",
       }}
     >
+      <Text
+        style={{
+          textAlign: "center",
+          fontSize: 50,
+          fontFamily: "medium",
+          color: "#328f8a",
+        }}
+      >
+        All Attendance{"\n"}In One Place
+      </Text>
       <View style={styles.container}>
         <Image
           style={styles.image}
           source={require("../assets/images/welcome_screen.jpg")}
         />
       </View>
-      <Text style={{ textAlign: "center", fontSize: 50 }}>
-        All Attendance In One Place
-      </Text>
-      <Text style={{ textAlign: "center", fontSize: 25 }}>
-        Track & Monitor Attendance
+      <Text
+        style={{ textAlign: "center", fontSize: 25, fontFamily: "semibold" }}
+      >
+        Track & Monitor Your Attendance
       </Text>
       <TouchableOpacity
         style={styles.button}
@@ -53,16 +61,17 @@ const styles = StyleSheet.create({
   },
 
   button: {
+    width: "80%",
     backgroundColor: "#40cbc3",
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    borderRadius: 25,
+    height: 50,
     alignItems: "center",
-    margin: 25,
+    justifyContent: "center",
+    alignSelf: "center",
   },
   buttonText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "bold",
   },
 });
