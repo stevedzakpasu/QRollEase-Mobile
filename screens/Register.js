@@ -35,8 +35,8 @@ export default function Register({ navigation }) {
     password: password,
   };
 
-  const [isModalvisible, setIsModalVisible] = useState(false);
-  const [isDialogvisible, setIsDialogVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
 
   const showDialog = () => setIsDialogVisible(true);
 
@@ -100,7 +100,7 @@ export default function Register({ navigation }) {
     <PaperProvider>
       <Portal>
         <Modal
-          visible={isModalvisible}
+          visible={isModalVisible}
           onDismiss={hideModal}
           contentContainerStyle={containerStyle}
           dismissable={false}
@@ -110,7 +110,7 @@ export default function Register({ navigation }) {
         </Modal>
 
         <Dialog
-          visible={isDialogvisible}
+          visible={isDialogVisible}
           onDismiss={hideDialog}
           style={{
             backgroundColor: "white",
