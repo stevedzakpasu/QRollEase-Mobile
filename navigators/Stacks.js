@@ -6,6 +6,8 @@ import Register from "../screens/Register";
 import Welcome from "../screens/Welcome";
 import Home from "../screens/Home";
 import EditScreen from "../screens/EditScreen";
+import CourseDetails from "../screens/CourseDetails";
+import LectureDetails from "../screens/LectureDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +44,8 @@ export function HomeStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeS" component={Home} />
+      <Stack.Screen name="CourseDetails" component={CourseDetails} />
+      <Stack.Screen name="LectureDetails" component={LectureDetails} />
     </Stack.Navigator>
   );
 }
