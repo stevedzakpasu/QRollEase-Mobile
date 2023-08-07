@@ -108,7 +108,12 @@ export default function Profile({ navigation }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Profile</Text>
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={() => {
+            setToken(null);
+          }}
+        >
           <Text
             style={{
               color: "white",
