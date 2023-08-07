@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Avatar } from "react-native-paper";
 import { AppContext } from "../context/AppContext";
 
-const apiUrl = "https://qrollease-api-112d897b35ef.herokuapp.com/api/users/me"; // Replace with your API endpoint
+const apiUrl = "https://qrollease-api-112d897b35ef.herokuapp.com/api/users/me";
+
+const apiUrl2 =
+  "https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me";
 
 const UserInfoList = ({ data, navigation }) => {
   const handleRowPress = (item) => {
@@ -35,15 +37,23 @@ const UserInfoList = ({ data, navigation }) => {
 
 export default function Profile({ navigation }) {
   const { token, setToken } = useContext(AppContext);
+  const [loading, setLoading] = useState(true);
+
   const [userInfo, setUserInfo] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
+    first_name: "Loading",
+    last_name: "Loading",
+    email: "Loading",
+    role: "Loading",
+  });
+
+  const [studentInfo, setStudentInfo] = useState({
+    student_id: "Loading",
+    programme: "Loading",
   });
 
   useEffect(() => {
     async function fetchData() {
-      const options = {
+      const options1 = {
         method: "GET",
         url: apiUrl,
         headers: {
@@ -52,24 +62,66 @@ export default function Profile({ navigation }) {
         },
       };
 
-      await axios(options).then((response) => setUserInfo(response.data));
+      const options2 = {
+        method: "GET",
+        url: apiUrl2,
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${JSON.parse(token)}`,
+        },
+      };
+
+      try {
+        // Use Promise.all to wait for both promises to be resolved
+        const [userInfoResponse, studentInfoResponse] = await Promise.all([
+          axios(options1),
+          axios(options2),
+        ]);
+
+        setUserInfo(userInfoResponse.data);
+        setStudentInfo(studentInfoResponse.data);
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
 
     fetchData();
   }, []);
+
   const userData = [
     { label: "First Name", value: userInfo.first_name },
     { label: "Last Name", value: userInfo.last_name },
     { label: "Email", value: userInfo.email },
-    // Other user data
+    {
+      label: "Role",
+      value:
+        !loading && !userInfo.is_superuser && !userInfo.is_staff
+          ? "Student"
+          : userInfo.role,
+    },
+    { label: "Student ID", value: studentInfo.student_id },
+    { label: "Programme", value: studentInfo.programme },
   ];
   return (
     <View style={styles.container}>
-      <Avatar.Image
-        size={200}
-        source={require("../assets/images/avatar.png")}
-        style={styles.avatar}
-      />
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Profile</Text>
+        <TouchableOpacity style={styles.logoutButton}>
+          <Text
+            style={{
+              color: "white",
+              fontFamily: "bold",
+              fontSize: 15,
+              textAlign: "center",
+            }}
+          >
+            Logout
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <UserInfoList data={userData} navigation={navigation} />
     </View>
   );
@@ -78,27 +130,44 @@ export default function Profile({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    width: "100%",
+    padding: 16,
+    backgroundColor: "#f0f0f0",
   },
-  avatar: {
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "black",
-    alignSelf: "center",
-  },
+
   row: {
+    flex: 1,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    // paddingHorizontal: 16,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
   label: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "semibold",
   },
   value: {
     fontSize: 16,
+    fontFamily: "regular",
+  },
+
+  headerText: {
+    fontSize: 24,
+    fontFamily: "bold",
+    marginBottom: 10,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  logoutButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "red",
+    borderRadius: 10,
   },
 });
