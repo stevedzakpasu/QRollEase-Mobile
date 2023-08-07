@@ -8,6 +8,9 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  RefreshControl,
+  Pressable,
+  Image,
 } from "react-native";
 import axios from "axios";
 import { AppContext } from "../context/AppContext";
@@ -26,6 +29,17 @@ export default function Home({ navigation }) {
   const [showSearchBar, setShowSearchBar] = useState(false); // State to handle search bar visibility
   const [searchQuery, setSearchQuery] = useState(""); // State to handle search query
   const [filteredCourses, setFilteredCourses] = useState(courses); // State to hold filtered courses
+  const [refreshing, setRefreshing] = useState(false); // State to handle refresh
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchCourses();
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     fetchCourses();
@@ -67,13 +81,12 @@ export default function Home({ navigation }) {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.courseItem}
-      onPress={() => handleItemPress(item)}
-    >
-      <Text style={styles.courseTitle}>{item.course_title}</Text>
-      <Text style={styles.courseDescription}>{item.course_code}</Text>
-    </TouchableOpacity>
+    <Pressable style={styles.courseItem} onPress={() => handleItemPress(item)}>
+      <>
+        <Text style={styles.courseTitle}>{item.course_title}</Text>
+        <Text style={styles.courseDescription}>{item.course_code}</Text>
+      </>
+    </Pressable>
   );
 
   const handleItemPress = (item) => {
@@ -82,6 +95,7 @@ export default function Home({ navigation }) {
 
   const toggleSearchBar = () => {
     setShowSearchBar((prevState) => !prevState);
+    setSearchQuery("");
   };
 
   const handleSearch = (text) => {
@@ -145,6 +159,30 @@ export default function Home({ navigation }) {
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={styles.listContent}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={
+              <View style={styles.imageContainer}>
+                <Image
+                  style={[
+                    styles.image,
+                    {
+                      width: 200,
+                      height: 200,
+                      alignSelf: "center",
+                      flex: 1,
+                      marginVertical: 5,
+                    },
+                  ]} // Add width and height style here
+                  source={require("../assets/images/no-results.png")}
+                  resizeMode="contain" // Use "contain" to fit the image within the specified size
+                />
+                <Text style={{ fontFamily: "semibold", fontSize: 28 }}>
+                  No courses found
+                </Text>
+              </View>
+            }
           />
         </View>
       )}
@@ -220,5 +258,15 @@ const styles = StyleSheet.create({
     width: "100%",
     // justifyContent: "center",
     // alignItems: "center",
+  },
+  imageContainer: {
+    width: "100%", // Adjust this based on your layout requirements
+    height: 300, // Adjust this based on your layout requirements
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  image: {
+    flex: 1,
+    resizeMode: "contain",
   },
 });
