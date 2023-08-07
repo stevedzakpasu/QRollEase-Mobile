@@ -25,10 +25,26 @@ export default function Home({ navigation }) {
   const { token, setToken } = useContext(AppContext);
   const [showSearchBar, setShowSearchBar] = useState(false); // State to handle search bar visibility
   const [searchQuery, setSearchQuery] = useState(""); // State to handle search query
+  const [filteredCourses, setFilteredCourses] = useState(courses); // State to hold filtered courses
 
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  useEffect(() => {
+    // Filter courses based on the search query whenever searchQuery changes
+    const filtered = courses.filter((course) => {
+      const courseTitleMatch = course.course_title
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const courseCodeMatch = course.course_code
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      return courseTitleMatch || courseCodeMatch;
+    });
+
+    setFilteredCourses(filtered);
+  }, [searchQuery, courses]); // Add searchQuery and courses as dependencies
 
   const fetchCourses = async () => {
     try {
@@ -69,8 +85,20 @@ export default function Home({ navigation }) {
   };
 
   const handleSearch = (text) => {
-    // Implement search logic here
     setSearchQuery(text);
+
+    // Filter courses based on the search query
+    const filtered = courses.filter((course) => {
+      const courseTitleMatch = course.course_title
+        .toLowerCase()
+        .includes(text.toLowerCase());
+      const courseCodeMatch = course.course_code
+        .toLowerCase()
+        .includes(text.toLowerCase());
+      return courseTitleMatch || courseCodeMatch;
+    });
+
+    setFilteredCourses(filtered);
   };
 
   const renderHeader = () => {
@@ -113,7 +141,7 @@ export default function Home({ navigation }) {
         <View style={{ flexDirection: "column", flex: 1 }}>
           {renderHeader()}
           <FlatList
-            data={courses}
+            data={filteredCourses}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={styles.listContent}
