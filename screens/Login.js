@@ -72,8 +72,8 @@ export default function Login({ navigation }) {
         .then((response) => {
           save("email", email);
           save("password", password);
-          save("access_token", JSON.stringify(response.data));
-          setToken(JSON.stringify(response.data));
+          save("access_token", JSON.stringify(response.data.access_token));
+          setToken(JSON.stringify(response.data.access_token));
         })
         .catch((error) => {
           console.log(error);
