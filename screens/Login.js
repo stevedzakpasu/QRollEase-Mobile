@@ -21,7 +21,7 @@ import { Entypo } from "@expo/vector-icons";
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { token, setToken } = useContext(AppContext);
+  const { token, setToken, setUserInfo } = useContext(AppContext);
   const containerStyle = {
     backgroundColor: "white",
     padding: 20,
@@ -41,7 +41,7 @@ export default function Login({ navigation }) {
   const showModal = () => setIsModalVisible(true);
 
   const hideModal = () => setIsModalVisible(false);
-  const options = {
+  const options1 = {
     method: "POST",
     url: "http://qrollease-api-112d897b35ef.herokuapp.com/api/login/access-token",
     headers: {
@@ -58,6 +58,15 @@ export default function Login({ navigation }) {
     },
   };
 
+  const options2 = {
+    method: "GET",
+    url: "https://qrollease-api-112d897b35ef.herokuapp.com/api/users/me",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
+    },
+  };
+
   const isValidEmail = (email) => {
     const emailRegex =
       /^[^\s@]+@(ug\.edu\.gh|st\.ug\.edu\.gh|staff\.ug\.edu\.gh)$/;
@@ -68,12 +77,15 @@ export default function Login({ navigation }) {
   const handleLogin = () => {
     if (isInputValid()) {
       showModal();
-      axios(options)
+      axios(options1)
         .then((response) => {
           save("email", email);
           save("password", password);
           save("access_token", JSON.stringify(response.data.access_token));
           setToken(JSON.stringify(response.data.access_token));
+          axios(options2).then((response) => {
+            setUserInfo(response.data);
+          });
         })
         .catch((error) => {
           console.log(error);

@@ -3,9 +3,12 @@ import { HomeStack, UserProfileStack } from "./Stacks";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Scanner from "../screens/Scanner";
+import { AppContext } from "../context/AppContext";
+import { useContext } from "react";
 const Tab = createBottomTabNavigator();
 
 export function BottomTabs() {
+  const { userInfo } = useContext(AppContext);
   return (
     <Tab.Navigator
       // activeColor="#000000"
@@ -28,16 +31,17 @@ export function BottomTabs() {
           ),
         }}
       />
-
-      <Tab.Screen
-        name="Scanner"
-        component={Scanner}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="camera" color={color} size={size} />
-          ),
-        }}
-      />
+      {!userInfo.is_staff ? (
+        <Tab.Screen
+          name="Scanner"
+          component={Scanner}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="camera" color={color} size={size} />
+            ),
+          }}
+        />
+      ) : null}
       <Tab.Screen
         name="User Profile"
         component={UserProfileStack}

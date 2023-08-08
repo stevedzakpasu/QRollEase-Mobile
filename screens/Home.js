@@ -25,7 +25,7 @@ import { Ionicons } from "@expo/vector-icons";
 export default function Home({ navigation }) {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token, setToken } = useContext(AppContext);
+  const { token, setToken, userInfo } = useContext(AppContext);
   const [showSearchBar, setShowSearchBar] = useState(false); // State to handle search bar visibility
   const [searchQuery, setSearchQuery] = useState(""); // State to handle search query
   const [filteredCourses, setFilteredCourses] = useState(courses); // State to hold filtered courses
@@ -68,7 +68,9 @@ export default function Home({ navigation }) {
       };
 
       const response = await axios.get(
-        "https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me/courses",
+        userInfo.is_staff
+          ? "https://qrollease-api-112d897b35ef.herokuapp.com/api/staffs/me/courses"
+          : "https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me/courses",
         { headers }
       );
       setCourses(response.data);

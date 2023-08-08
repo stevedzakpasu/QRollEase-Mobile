@@ -9,11 +9,11 @@ import {
 } from "react-native";
 import { AppContext } from "../context/AppContext";
 
-const apiUrl = "https://qrollease-api-112d897b35ef.herokuapp.com/api/users/me";
-
-const apiUrl2 =
+const apiUrl =
   "https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me";
 
+const staffApiUrl =
+  "https://qrollease-api-112d897b35ef.herokuapp.com/api/staffs/me";
 const UserInfoList = ({ data, navigation }) => {
   const handleRowPress = (item) => {
     navigation.navigate("EditScreen", { item });
@@ -36,35 +36,32 @@ const UserInfoList = ({ data, navigation }) => {
 };
 
 export default function Profile({ navigation }) {
-  const { token, setToken } = useContext(AppContext);
+  const { token, setToken, setUserInfo, userInfo } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
+  const [isStaff, setIsStaff] = useState(userInfo.is_staff);
 
-  const [userInfo, setUserInfo] = useState({
-    first_name: "Loading",
-    last_name: "Loading",
-    email: "Loading",
-    role: "Loading",
-  });
+  // const [userInformation, setUserInformation] = useState({
+  //   first_name: "Loading",
+  //   last_name: "Loading",
+  //   email: "Loading",
+  //   role: "Loading",
+  // });
 
   const [studentInfo, setStudentInfo] = useState({
     student_id: "Loading",
     programme: "Loading",
   });
 
+  const [staffInfo, setStaffInfo] = useState({
+    staff_id: "Loading",
+    department: "Loading",
+  });
+
   useEffect(() => {
     async function fetchData() {
-      const options1 = {
+      const options = {
         method: "GET",
-        url: apiUrl,
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${JSON.parse(token)}`,
-        },
-      };
-
-      const options2 = {
-        method: "GET",
-        url: apiUrl2,
+        url: isStaff ? staffApiUrl : apiUrl,
         headers: {
           accept: "application/json",
           Authorization: `Bearer ${JSON.parse(token)}`,
@@ -72,14 +69,13 @@ export default function Profile({ navigation }) {
       };
 
       try {
-        // Use Promise.all to wait for both promises to be resolved
-        const [userInfoResponse, studentInfoResponse] = await Promise.all([
-          axios(options1),
-          axios(options2),
-        ]);
+        const InfoResponse = await axios(options);
 
-        setUserInfo(userInfoResponse.data);
-        setStudentInfo(studentInfoResponse.data);
+        {
+          !isStaff
+            ? setStudentInfo(InfoResponse.data)
+            : setStaffInfo(InfoResponse.data);
+        }
 
         setLoading(false);
       } catch (error) {
@@ -99,10 +95,16 @@ export default function Profile({ navigation }) {
       value:
         !loading && !userInfo.is_superuser && !userInfo.is_staff
           ? "Student"
-          : userInfo.role,
+          : "Staff",
     },
-    { label: "Student ID", value: studentInfo.student_id },
-    { label: "Programme", value: studentInfo.programme },
+    {
+      label: isStaff ? "Staff ID" : "Student ID",
+      value: isStaff ? staffInfo.staff_id : studentInfo.student_id,
+    },
+    {
+      label: isStaff ? "Department" : "Programme",
+      value: isStaff ? staffInfo.department : studentInfo.programme,
+    },
   ];
   return (
     <View style={styles.container}>
@@ -112,6 +114,7 @@ export default function Profile({ navigation }) {
           style={styles.logoutButton}
           onPress={() => {
             setToken(null);
+            setUserInfo({});
           }}
         >
           <Text

@@ -6,12 +6,14 @@ import * as SplashScreen from "expo-splash-screen";
 import { UnauthenticatedStack } from "./navigators/Stacks";
 import { save, getValueFor } from "./hooks/SecureStore";
 import { AppContext } from "./context/AppContext";
+import { UnverifiedStack } from "./navigators/Stacks";
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [token, setToken] = useState(null);
+  const [userInfo, setUserInfo] = useState({});
   const options = {
     method: "POST",
     url: "http://qrollease-api-112d897b35ef.herokuapp.com/api/login/access-token",
@@ -70,7 +72,9 @@ export default function App() {
       console.log(error);
     }
   }, []); // Empty dependency array indicates that the callback doesn't depend on any external variables
-
+  useEffect(() => {
+    console.log(userInfo);
+  });
   useEffect(() => {
     if (email) updateAccessToken();
   }, [updateAccessToken, email]);
@@ -87,8 +91,18 @@ export default function App() {
 
   return (
     <NavigationContainer onReady={onLayoutRootView}>
-      <AppContext.Provider value={{ token, setToken, updateAccessToken }}>
-        {!token ? <UnauthenticatedStack /> : <BottomTabs />}
+      <AppContext.Provider
+        value={{ token, setToken, updateAccessToken, userInfo, setUserInfo }}
+      >
+        {(() => {
+          if (Object.keys(userInfo).length === 0) {
+            return <UnauthenticatedStack />;
+          } else if (!userInfo.is_verified) {
+            return <UnverifiedStack />;
+          } else {
+            return <BottomTabs />;
+          }
+        })()}
       </AppContext.Provider>
     </NavigationContainer>
   );
