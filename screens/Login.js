@@ -74,22 +74,20 @@ export default function Login({ navigation }) {
   };
   const isInputValid = () => email !== "" && password !== "";
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (isInputValid()) {
       showModal();
-      axios(options1)
+      await axios(options1).then((response) => {
+        save("email", email);
+        save("password", password);
+        save("access_token", JSON.stringify(response.data.access_token));
+        setToken(JSON.stringify(response.data.access_token));
+      });
+      await axios(options2)
         .then((response) => {
-          save("email", email);
-          save("password", password);
-          save("access_token", JSON.stringify(response.data.access_token));
-          setToken(JSON.stringify(response.data.access_token));
-          axios(options2).then((response) => {
-            setUserInfo(response.data);
-          });
+          setUserInfo(response.data);
         })
-        .catch((error) => {
-          console.log(error);
-        })
+        .catch((err) => console.log(`an error occured ${err}`))
         .finally(hideModal);
     } else {
       showDialog();
