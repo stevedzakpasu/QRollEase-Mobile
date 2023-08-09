@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { AppContext } from "../context/AppContext";
+import { removeItem } from "../hooks/SecureStore";
 
 const apiUrl =
   "https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me";
@@ -115,6 +116,7 @@ export default function Profile({ navigation }) {
           onPress={() => {
             setToken(null);
             setUserInfo({});
+            removeItem("access_token");
           }}
         >
           <Text
