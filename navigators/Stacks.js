@@ -43,11 +43,11 @@ export function UserProfileStack() {
     </Stack.Navigator>
   );
 }
-// export function UnverifiedStack() {
-//   return (
-//     <Stack.Navigator screenOptions={{ headerShown: false }}>
-//       <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
-//       <Stack.Screen name="AdInformation" component={AdInformation} />
-//     </Stack.Navigator>
-//   );
-// }
+export function UnverifiedStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
+      <Stack.Screen name="AdInformation" component={AdInformation} />
+    </Stack.Navigator>
+  );
+}
