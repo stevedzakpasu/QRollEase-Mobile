@@ -25,7 +25,7 @@ export default function Welcome({ navigation }) {
           color: "#328f8a",
         }}
       >
-        All Attendance{"\n"}In One Place
+        Attendance{"\n"}In One Place
       </Text>
       <View style={styles.container}>
         <Image

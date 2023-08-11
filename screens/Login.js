@@ -154,37 +154,45 @@ export default function Login({ navigation }) {
         <View style={styles.inputView}>
           <TextInput
             label={
-              <Text style={{ fontFamily: "bold", color: "black" }}>Email</Text>
+              <Text
+                style={{ fontFamily: "semibold", color: "black", fontSize: 14 }}
+              >
+                Email
+              </Text>
             }
             style={styles.inputText}
-            activeUnderlineColor="transparent"
-            underlineColor="transparent"
+            activeUnderlineColor="#40cbc3"
+            underlineColor="black"
             cursorColor="black"
             onChangeText={(text) => setEmail(text)}
+            contentStyle={{ fontFamily: "medium", color: "black" }}
           />
         </View>
         <View style={styles.inputView}>
           <TextInput
             // mode="outlined"
             label={
-              <Text style={{ fontFamily: "bold", color: "black" }}>
+              <Text
+                style={{ fontFamily: "semibold", color: "black", fontSize: 14 }}
+              >
                 Password
               </Text>
             }
             secureTextEntry
             style={styles.inputText}
             // placeholder="Password"
-            activeUnderlineColor="transparent"
-            underlineColor="transparent"
+            activeUnderlineColor="#40cbc3"
+            underlineColor="black"
             cursorColor="black"
             onChangeText={(text) => setPassword(text)}
+            contentStyle={{ fontFamily: "medium", color: "black" }}
           />
         </View>
         <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
           <Text style={styles.loginText}>SIGN IN</Text>
         </TouchableOpacity>
         <Text
-          style={{ fontFamily: "semibold" }}
+          style={{ fontFamily: "light", marginVertical: 25 }}
           onPress={() => navigation.navigate("Register")}
         >
           Don't have an account yet? Register
@@ -209,7 +217,7 @@ const styles = StyleSheet.create({
   },
   inputView: {
     width: "80%",
-    backgroundColor: "#e6e6e6",
+    backgroundColor: "white",
     borderRadius: 25,
     height: 50,
     marginBottom: 20,
@@ -219,7 +227,7 @@ const styles = StyleSheet.create({
   inputText: {
     height: 50,
     color: "black",
-    backgroundColor: "#e6e6e6",
+    backgroundColor: "white",
   },
   loginBtn: {
     width: "80%",

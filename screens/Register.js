@@ -1,18 +1,15 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Pressable,
 } from "react-native";
 import { AppContext } from "../context/AppContext";
-import { TextInput } from "react-native-paper";
-
 import { Entypo } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { save } from "../hooks/SecureStore";
-
 import axios from "axios";
 import {
   Modal,
@@ -20,6 +17,7 @@ import {
   PaperProvider,
   ActivityIndicator,
   Dialog,
+  TextInput,
 } from "react-native-paper";
 
 export default function Register({ navigation }) {
@@ -37,10 +35,14 @@ export default function Register({ navigation }) {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
-
+  const [isSuccessDialogVisible, setIsSuccessDialogVisible] = useState(false);
   const showDialog = () => setIsDialogVisible(true);
 
   const hideDialog = () => setIsDialogVisible(false);
+
+  const showSuccessDialog = () => setIsSuccessDialogVisible(true);
+
+  const hideSuccessDialog = () => setIsSuccessDialogVisible(false);
 
   const showModal = () => setIsModalVisible(true);
 
@@ -90,7 +92,10 @@ export default function Register({ navigation }) {
         .catch((error) => {
           console.error(error);
         })
-        .finally(hideModal);
+        .finally(() => {
+          hideModal();
+          showSuccessDialog();
+        });
     } else {
       showDialog();
     }
@@ -151,6 +156,59 @@ export default function Register({ navigation }) {
             </Pressable>
           </Dialog.Actions>
         </Dialog>
+
+        <Dialog
+          visible={isSuccessDialogVisible}
+          onDismiss={hideSuccessDialog}
+          style={{
+            backgroundColor: "white",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+          }}
+        >
+          <Dialog.Title style={{ marginVertical: 10 }}>
+            <View
+              style={{
+                flexDirection: "column",
+
+                alignItems: "center",
+                justifyContent: "center",
+                alignSelf: "center",
+              }}
+            >
+              <Ionicons name="checkmark-circle-sharp" size={48} color="green" />
+              <Text style={{ textAlign: "center", fontFamily: "bold" }}>
+                Sign Up Successful
+              </Text>
+            </View>
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text
+              style={{ textAlign: "left", fontFamily: "bold" }}
+              variant="bodyMedium"
+            >
+              You can now proceed to log into your account
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions style={{ alignSelf: "center" }}>
+            <Pressable
+              style={styles.dismissBtn}
+              onPress={() => {
+                navigation.navigate("Login");
+              }}
+            >
+              <Text
+                style={{
+                  alignSelf: "center",
+                  color: "white",
+                  fontFamily: "bold",
+                }}
+              >
+                Login
+              </Text>
+            </Pressable>
+          </Dialog.Actions>
+        </Dialog>
       </Portal>
       <View style={styles.container}>
         <Text style={styles.logo}>Create A New Account</Text>
@@ -158,48 +216,51 @@ export default function Register({ navigation }) {
           <TextInput
             label={
               <Text
-                style={{ fontFamily: "bold", color: "black", fontSize: 14 }}
+                style={{ fontFamily: "semibold", color: "black", fontSize: 14 }}
               >
                 First Name
               </Text>
             }
             style={styles.inputText}
-            activeUnderlineColor="transparent"
-            underlineColor="transparent"
+            activeUnderlineColor="#40cbc3"
+            underlineColor="black"
             cursorColor="black"
             onChangeText={(text) => setFirstName(text)}
+            contentStyle={{ fontFamily: "medium", color: "black" }}
           />
         </View>
         <View style={styles.inputView}>
           <TextInput
             label={
               <Text
-                style={{ fontFamily: "bold", color: "black", fontSize: 14 }}
+                style={{ fontFamily: "semibold", color: "black", fontSize: 14 }}
               >
                 Last Name
               </Text>
             }
             style={styles.inputText}
-            activeUnderlineColor="transparent"
-            underlineColor="transparent"
+            activeUnderlineColor="#40cbc3"
+            underlineColor="black"
             cursorColor="black"
             onChangeText={(text) => setLastName(text)}
+            contentStyle={{ fontFamily: "medium", color: "black" }}
           />
         </View>
         <View style={styles.inputView}>
           <TextInput
             label={
               <Text
-                style={{ fontFamily: "bold", color: "black", fontSize: 14 }}
+                style={{ fontFamily: "semibold", color: "black", fontSize: 14 }}
               >
                 University Email
               </Text>
             }
             style={styles.inputText}
-            activeUnderlineColor="transparent"
-            underlineColor="transparent"
+            activeUnderlineColor="#40cbc3"
+            underlineColor="black"
             cursorColor="black"
             onChangeText={(text) => setEmail(text)}
+            contentStyle={{ fontFamily: "medium", color: "black" }}
           />
         </View>
         <View style={styles.inputView}>
@@ -207,23 +268,24 @@ export default function Register({ navigation }) {
             secureTextEntry
             label={
               <Text
-                style={{ fontFamily: "bold", color: "black", fontSize: 14 }}
+                style={{ fontFamily: "semibold", color: "black", fontSize: 14 }}
               >
                 Password
               </Text>
             }
             style={styles.inputText}
-            activeUnderlineColor="transparent"
-            underlineColor="transparent"
+            activeUnderlineColor="#40cbc3"
+            underlineColor="black"
             cursorColor="black"
             onChangeText={(text) => setPassword(text)}
+            contentStyle={{ fontFamily: "medium", color: "black" }}
           />
         </View>
         <TouchableOpacity style={styles.signUpBtn} onPress={handleSignUp}>
           <Text style={styles.loginText}>SIGN UP</Text>
         </TouchableOpacity>
         <Text
-          style={{ fontFamily: "semibold" }}
+          style={{ fontFamily: "light", marginVertical: 25 }}
           onPress={() => navigation.navigate("Login")}
         >
           Already a user? Login
@@ -248,7 +310,7 @@ const styles = StyleSheet.create({
   },
   inputView: {
     width: "80%",
-    backgroundColor: "#e6e6e6",
+    backgroundColor: "white",
     borderRadius: 25,
     height: 50,
     marginBottom: 20,
@@ -257,9 +319,7 @@ const styles = StyleSheet.create({
   },
   inputText: {
     height: 50,
-    color: "black",
-    backgroundColor: "#e6e6e6",
-    fontFamily: "bold",
+    backgroundColor: "white",
   },
   signUpBtn: {
     width: "80%",
