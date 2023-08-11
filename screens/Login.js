@@ -191,12 +191,30 @@ export default function Login({ navigation }) {
         <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
           <Text style={styles.loginText}>SIGN IN</Text>
         </TouchableOpacity>
-        <Text
-          style={{ fontFamily: "light", marginVertical: 25 }}
-          onPress={() => navigation.navigate("Register")}
-        >
-          Don't have an account yet? Register
-        </Text>
+        <TouchableOpacity style={{ width: "100%" }}>
+          <Text
+            style={{
+              fontFamily: "regular",
+              marginVertical: 20,
+              textAlign: "center",
+            }}
+            onPress={() => navigation.navigate("ResetPassword")}
+          >
+            Do you have trouble login in? Reset your password
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ width: "100%" }}>
+          <Text
+            style={{
+              fontFamily: "regular",
+              marginVertical: 20,
+              textAlign: "center",
+            }}
+            onPress={() => navigation.navigate("Register")}
+          >
+            Don't have an account yet? Register
+          </Text>
+        </TouchableOpacity>
       </View>
     </PaperProvider>
   );
@@ -226,7 +244,6 @@ const styles = StyleSheet.create({
   },
   inputText: {
     height: 50,
-    color: "black",
     backgroundColor: "white",
   },
   loginBtn: {

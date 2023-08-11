@@ -8,6 +8,9 @@ import Home from "../screens/Home";
 import EditScreen from "../screens/EditScreen";
 import CourseDetails from "../screens/CourseDetails";
 import LectureDetails from "../screens/LectureDetails";
+import AdInformation from "../screens/AdInformation";
+import VerifyEmail from "../screens/VerifyEmail";
+import ResetPassword from "../screens/ResetPassword";
 
 const Stack = createNativeStackNavigator();
 
@@ -16,34 +19,17 @@ export function UnauthenticatedStack() {
     <Stack.Navigator
       screenOptions={{ animation: "simple_push", headerShown: false }}
     >
-      <Stack.Screen
-        name="Welcome"
-        component={Welcome}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="Register"
-        component={Register}
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen name="Welcome" component={Welcome} />
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen name="ResetPassword" component={ResetPassword} />
     </Stack.Navigator>
   );
 }
 export function HomeStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="HomeS" component={Home} />
+      <Stack.Screen name="Course" component={Home} />
       <Stack.Screen name="CourseDetails" component={CourseDetails} />
       <Stack.Screen name="LectureDetails" component={LectureDetails} />
     </Stack.Navigator>
@@ -57,3 +43,11 @@ export function UserProfileStack() {
     </Stack.Navigator>
   );
 }
+// export function UnverifiedStack() {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
+//       <Stack.Screen name="AdInformation" component={AdInformation} />
+//     </Stack.Navigator>
+//   );
+// }
