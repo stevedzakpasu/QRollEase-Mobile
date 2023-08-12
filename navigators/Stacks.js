@@ -11,6 +11,7 @@ import LectureDetails from "../screens/LectureDetails";
 import AdInformation from "../screens/AdInformation";
 import VerifyEmail from "../screens/VerifyEmail";
 import ResetPassword from "../screens/ResetPassword";
+import Loading from "../screens/Loading";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ export function UnauthenticatedStack() {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
+      <Stack.Screen name="Loading" component={Loading} />
     </Stack.Navigator>
   );
 }
@@ -48,6 +50,7 @@ export function UnverifiedStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
       <Stack.Screen name="AdInformation" component={AdInformation} />
+      <Stack.Screen name="Loading" component={Loading} />
     </Stack.Navigator>
   );
 }

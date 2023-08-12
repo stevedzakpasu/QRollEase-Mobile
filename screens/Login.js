@@ -18,6 +18,7 @@ import {
 import axios from "axios";
 import { AppContext } from "../context/AppContext";
 import { Entypo } from "@expo/vector-icons";
+import { saveLocally } from "../hooks/LocalStorage";
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -58,15 +59,6 @@ export default function Login({ navigation }) {
     },
   };
 
-  const options2 = {
-    method: "GET",
-    url: "https://qrollease-api-112d897b35ef.herokuapp.com/api/users/me",
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${JSON.parse(token)} `,
-    },
-  };
-
   const isValidEmail = (email) => {
     const emailRegex =
       /^[^\s@]+@(ug\.edu\.gh|st\.ug\.edu\.gh|staff\.ug\.edu\.gh)$/;
@@ -77,18 +69,15 @@ export default function Login({ navigation }) {
   const handleLogin = async () => {
     if (isInputValid()) {
       showModal();
-      await axios(options1).then((response) => {
-        save("email", email);
-        save("password", password);
-        save("access_token", JSON.stringify(response.data.access_token));
-        setToken(JSON.stringify(response.data.access_token));
-      });
-      await axios(options2)
+      await axios(options1)
         .then((response) => {
-          setUserInfo(response.data);
+          save("email", email);
+          save("password", password);
+          save("access_token", JSON.stringify(response.data.access_token));
+          setToken(JSON.stringify(response.data.access_token));
+          navigation.navigate("Loading");
         })
-        .catch((err) => console.log(`an error occured ${err}`))
-        .finally(hideModal);
+        .catch(hideModal);
     } else {
       showDialog();
     }

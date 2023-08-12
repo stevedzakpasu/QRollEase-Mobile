@@ -1,19 +1,25 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { BottomTabs } from "./navigators/BottomTabs";
 import { useCallback, useEffect, useState } from "react";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { UnauthenticatedStack } from "./navigators/Stacks";
+import { NavigationContainer } from "@react-navigation/native";
+import {
+  UnauthenticatedStack,
+  UnverifiedStack,
+  HomeStack,
+} from "./navigators/Stacks";
+import { BottomTabs } from "./navigators/BottomTabs";
 import { save, getValueFor } from "./hooks/SecureStore";
+import { saveLocally, getLocalValueFor } from "./hooks/LocalStorage";
 import { AppContext } from "./context/AppContext";
-import { UnverifiedStack } from "./navigators/Stacks";
+import Loading from "./screens/Loading";
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [token, setToken] = useState(null);
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState(null);
+
   const options = {
     method: "POST",
     url: "http://qrollease-api-112d897b35ef.herokuapp.com/api/login/access-token",
@@ -30,6 +36,15 @@ export default function App() {
       client_secret: "",
     },
   };
+
+  const options2 = {
+    method: "GET",
+    url: "https://qrollease-api-112d897b35ef.herokuapp.com/api/users/me",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
+    },
+  };
   useEffect(() => {
     async function getAppReady() {
       try {
@@ -42,6 +57,11 @@ export default function App() {
         await getValueFor("password").then((password) => {
           setPassword(password);
         });
+        await getLocalValueFor("user_info").then((user_info) => {
+          setUserInfo(JSON.parse(user_info));
+        });
+        await updateAccessToken();
+        await updateUserInfo();
         await SplashScreen.preventAutoHideAsync();
         await Font.loadAsync({
           bold: require("./assets/fonts/Montserrat-Bold.ttf"),
@@ -64,20 +84,31 @@ export default function App() {
   }, []);
 
   const updateAccessToken = useCallback(async () => {
-    try {
-      const response = await axios(options);
-      save("access_token", JSON.stringify(response.data));
-      setToken(JSON.stringify(response.data));
-    } catch (error) {
-      console.log(error);
+    if (email && password) {
+      try {
+        const response = await axios(options);
+        save("access_token", JSON.stringify(response.data.access_token));
+        console.log(response.data.access_token);
+        setToken(JSON.stringify(response.data.access_token));
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }, []); // Empty dependency array indicates that the callback doesn't depend on any external variables
-  useEffect(() => {
-    console.log(userInfo);
-  });
-  useEffect(() => {
-    if (email) updateAccessToken();
-  }, [updateAccessToken, email]);
+  }, []);
+
+  const updateUserInfo = useCallback(async () => {
+    if (access_token) {
+      {
+        try {
+          const response = await axios(options2);
+          saveLocally("user_info", JSON.stringify(response.data));
+          setUserInfo(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -92,17 +123,21 @@ export default function App() {
   return (
     <NavigationContainer onReady={onLayoutRootView}>
       <AppContext.Provider
-        value={{ token, setToken, updateAccessToken, userInfo, setUserInfo }}
+        value={{
+          token,
+          setToken,
+          updateAccessToken,
+          userInfo,
+          setUserInfo,
+        }}
       >
-        {(() => {
-          if (Object.keys(userInfo).length === 0) {
-            return <UnauthenticatedStack />;
-          } else if (!userInfo.is_verified) {
-            return <UnverifiedStack />;
-          } else {
-            return <BottomTabs />;
-          }
-        })()}
+        {token && !userInfo && <Loading />}
+
+        {token && userInfo && userInfo.is_verified && <BottomTabs />}
+
+        {token && userInfo && !userInfo.is_verified && <UnverifiedStack />}
+
+        {!token && <UnauthenticatedStack />}
       </AppContext.Provider>
     </NavigationContainer>
   );
