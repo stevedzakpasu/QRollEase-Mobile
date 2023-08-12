@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { AppContext } from "../context/AppContext";
 import { removeItem } from "../hooks/SecureStore";
+import { removeLocalValueFor } from "../hooks/LocalStorage";
 
 const apiUrl =
   "https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me";
@@ -115,8 +116,11 @@ export default function Profile({ navigation }) {
           style={styles.logoutButton}
           onPress={() => {
             setToken(null);
-            setUserInfo({});
+            setUserInfo(null);
             removeItem("access_token");
+            removeItem("email");
+            removeItem("password");
+            removeLocalValueFor("user_info");
           }}
         >
           <Text
