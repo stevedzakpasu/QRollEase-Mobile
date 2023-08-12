@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const accessToken = async (key, value) => {
+const saveLocally = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, value);
   } catch (error) {
@@ -8,12 +8,20 @@ const accessToken = async (key, value) => {
   }
 };
 
-const getAccessToken = async (key) => {
+const getLocalValueFor = async (key) => {
   try {
-    let token = await AsyncStorage.getItem(key);
-    return token;
+    return await AsyncStorage.getItem(key);
   } catch (error) {
     alert("Something may have gone wrong, please restart the app.");
   }
 };
-export { accessToken, getAccessToken };
+const removeLocalValueFor = async (key) => {
+  try {
+    await AsyncStorage.removeItem(key);
+    return true;
+  } catch (exception) {
+    return false;
+  }
+};
+
+export { saveLocally, getLocalValueFor, removeLocalValueFor };
