@@ -5,7 +5,6 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  TextInput,
   TouchableWithoutFeedback,
   Keyboard,
   RefreshControl,
@@ -20,17 +19,22 @@ import {
   PaperProvider,
   ActivityIndicator,
   Dialog,
+  TextInput,
 } from "react-native-paper";
+import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 export default function Home({ navigation }) {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDialogvisible, setIsDialogVisible] = useState(false);
   const { token, setToken, userInfo } = useContext(AppContext);
   const [showSearchBar, setShowSearchBar] = useState(false); // State to handle search bar visibility
   const [searchQuery, setSearchQuery] = useState(""); // State to handle search query
   const [filteredCourses, setFilteredCourses] = useState(courses); // State to hold filtered courses
   const [refreshing, setRefreshing] = useState(false); // State to handle refresh
+  const showDialog = () => setIsDialogVisible(true);
 
+  const hideDialog = () => setIsDialogVisible(false);
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -150,45 +154,140 @@ export default function Home({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      {loading ? (
-        <ActivityIndicator size="large" color="#000" />
-      ) : (
-        <View style={{ flexDirection: "column", flex: 1 }}>
-          {renderHeader()}
-          <FlatList
-            data={filteredCourses}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={styles.listContent}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            ListEmptyComponent={
-              <View style={styles.imageContainer}>
-                <Image
-                  style={[
-                    styles.image,
-                    {
-                      width: 200,
-                      height: 200,
-                      alignSelf: "center",
-                      flex: 1,
-                      marginVertical: 5,
-                    },
-                  ]} // Add width and height style here
-                  source={require("../assets/images/no-results.png")}
-                  resizeMode="contain" // Use "contain" to fit the image within the specified size
-                />
-                <Text style={{ fontFamily: "semibold", fontSize: 28 }}>
-                  No courses found
-                </Text>
-              </View>
-            }
-          />
+    <PaperProvider>
+      <Portal>
+        <View style={styles.container}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#000" />
+          ) : (
+            <View style={{ flexDirection: "column", flex: 1 }}>
+              {renderHeader()}
+              <FlatList
+                data={filteredCourses}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={styles.listContent}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                ListEmptyComponent={
+                  <View style={styles.imageContainer}>
+                    <Image
+                      style={[
+                        styles.image,
+                        {
+                          width: 200,
+                          height: 200,
+                          alignSelf: "center",
+                          flex: 1,
+                          marginVertical: 5,
+                        },
+                      ]} // Add width and height style here
+                      source={require("../assets/images/no-results.png")}
+                      resizeMode="contain" // Use "contain" to fit the image within the specified size
+                    />
+                    <Text style={{ fontFamily: "semibold", fontSize: 28 }}>
+                      No courses found
+                    </Text>
+                  </View>
+                }
+              />
+              <TouchableOpacity
+                style={{
+                  position: "absolute", // Required for positioning
+                  zIndex: 1,
+                  bottom: 55,
+                  right: 15,
+                }}
+                onPress={showDialog}
+              >
+                <Ionicons name="md-add-circle-sharp" size={48} color="black" />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
-      )}
-    </View>
+        <Dialog
+          visible={isDialogvisible}
+          onDismiss={hideDialog}
+          style={{
+            backgroundColor: "white",
+            // justifyContent: "space-between",
+            alignItems: "center",
+            paddingVertical: 24,
+          }}
+        >
+          <Dialog.Title style={{ textAlign: "center" }}>
+            <View
+              style={{
+                flexDirection: "column",
+
+                alignItems: "center",
+              }}
+            >
+              <Ionicons name="create" size={55} color="black" />
+              <Text style={{ fontFamily: "semibold" }}>New course</Text>
+            </View>
+          </Dialog.Title>
+          <Dialog.Content>
+            <View
+              style={{
+                flexDirection: "row",
+                marginVertical: 10,
+              }}
+            >
+              <TextInput
+                label={
+                  <Text style={{ fontFamily: "bold", color: "black" }}>
+                    Email
+                  </Text>
+                }
+                style={{ width: "100%" }}
+                activeUnderlineColor="transparent"
+                underlineColor="transparent"
+                cursorColor="black"
+                // onChangeText={(text) => setEmail(text)}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                marginVertical: 10,
+              }}
+            >
+              <TextInput
+                label={
+                  <Text style={{ fontFamily: "bold", color: "black" }}>
+                    Email
+                  </Text>
+                }
+                style={{ width: "100%" }}
+                activeUnderlineColor="transparent"
+                underlineColor="transparent"
+                cursorColor="black"
+                // onChangeText={(text) => setEmail(text)}
+              />
+            </View>
+          </Dialog.Content>
+          <Dialog.Actions style={{ alignSelf: "center" }}>
+            <Pressable style={styles.createBtn} onPress={hideDialog}>
+              <Text
+                style={{
+                  alignSelf: "center",
+                  color: "white",
+                  fontFamily: "bold",
+                }}
+              >
+                Create
+              </Text>
+            </Pressable>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    </PaperProvider>
   );
 }
 
@@ -270,5 +369,13 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     resizeMode: "contain",
+  },
+  createBtn: {
+    width: "80%",
+    backgroundColor: "#40cbc3",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
