@@ -1,12 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { NavigationContainer } from "@react-navigation/native";
-import {
-  UnauthenticatedStack,
-  UnverifiedStack,
-  HomeStack,
-} from "./navigators/Stacks";
+import { UnauthenticatedStack, UnverifiedStack } from "./navigators/Stacks";
 import { BottomTabs } from "./navigators/BottomTabs";
 import { save, getValueFor } from "./hooks/SecureStore";
 import { saveLocally, getLocalValueFor } from "./hooks/LocalStorage";
@@ -19,6 +15,17 @@ export default function App() {
   const [password, setPassword] = useState(null);
   const [token, setToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+
+  const contextValue = useMemo(
+    () => ({
+      token,
+      setToken,
+      updateAccessToken,
+      userInfo,
+      setUserInfo,
+    }),
+    [token, setToken, updateAccessToken, userInfo, setUserInfo]
+  );
 
   const options = {
     method: "POST",
@@ -88,7 +95,6 @@ export default function App() {
       try {
         const response = await axios(options);
         save("access_token", JSON.stringify(response.data.access_token));
-        console.log(response.data.access_token);
         setToken(JSON.stringify(response.data.access_token));
       } catch (error) {
         console.log(error);
@@ -122,15 +128,7 @@ export default function App() {
 
   return (
     <NavigationContainer onReady={onLayoutRootView}>
-      <AppContext.Provider
-        value={{
-          token,
-          setToken,
-          updateAccessToken,
-          userInfo,
-          setUserInfo,
-        }}
-      >
+      <AppContext.Provider value={contextValue}>
         {token && !userInfo && <Loading />}
 
         {token && userInfo && userInfo.is_verified && <BottomTabs />}
