@@ -124,18 +124,29 @@ export default function Home({ navigation }) {
   const renderHeader = () => {
     if (showSearchBar) {
       return (
-        <View style={styles.searchContainer}>
+        <View style={styles.header}>
           <TextInput
-            style={{ marginLeft: 25, fontFamily: "regular", width: "100%" }}
+            style={{
+              // marginLeft: 25,
+              fontFamily: "regular",
+              width: "95%",
+              backgroundColor: "#f0f0f0",
+              // height: "100%",
+              // backgroundColor: "white",
+            }}
             placeholder="Search courses..."
             value={searchQuery}
             onChangeText={handleSearch}
+            activeUnderlineColor="#40cbc3"
+            underlineColor="black"
+            cursorColor="black"
+            contentStyle={{ fontFamily: "medium", color: "black" }}
           />
           <TouchableOpacity
             onPress={toggleSearchBar}
             style={styles.iconContainer}
           >
-            <Ionicons name="close" size={32} color="black" />
+            <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
         </View>
       );
@@ -235,19 +246,28 @@ export default function Home({ navigation }) {
             <View
               style={{
                 flexDirection: "row",
-                marginVertical: 10,
+                // marginVertical: 10,
+                width: "100%",
+                backgroundColor: "white",
+                borderRadius: 25,
+                height: 50,
+                marginBottom: 20,
+                justifyContent: "center",
+                padding: 20,
               }}
             >
               <TextInput
                 label={
                   <Text style={{ fontFamily: "bold", color: "black" }}>
-                    Email
+                    Course Code
                   </Text>
                 }
-                style={{ width: "100%" }}
-                activeUnderlineColor="transparent"
-                underlineColor="transparent"
+                style={{ width: "100%", height: 50, backgroundColor: "white" }}
+                activeUnderlineColor="#40cbc3"
+                underlineColor="black"
                 cursorColor="black"
+                onChangeText={(text) => setPassword(text)}
+                contentStyle={{ fontFamily: "medium", color: "black" }}
                 // onChangeText={(text) => setEmail(text)}
               />
             </View>
@@ -324,10 +344,10 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontFamily: "bold",
-    marginBottom: 15,
+    // marginBottom: 15,
   },
   searchBar: {
-    height: 40,
+    height: 30,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
@@ -335,28 +355,30 @@ const styles = StyleSheet.create({
     // marginBottom: 10,
     justifyContent: "center",
     width: "100%",
+    backgroundColor: "#f0f0f0",
   },
   searchContainer: {
-    // width: "100%",
     flexDirection: "row",
-    // alignItems: "center",
-    // marginBottom: 10,
-    // paddingHorizontal: 8,
-    borderColor: "#ccc",
-    borderWidth: 2,
-    borderRadius: 8,
-    padding: 5,
-    // marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    backgroundColor: "#f0f0f0",
   },
   iconContainer: {
-    position: "absolute",
+    // position: "absolute",
     // right: 2,
     // top: 1,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+    // alignSelf: "center",
     width: "100%",
+    // backgroundColor: "black",
+    height: 50,
+    // height: 80,
     // justifyContent: "center",
     // alignItems: "center",
   },
