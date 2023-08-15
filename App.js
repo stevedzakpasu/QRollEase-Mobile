@@ -55,20 +55,6 @@ export default function App() {
   useEffect(() => {
     async function getAppReady() {
       try {
-        await getValueFor("access_token").then((access_token) => {
-          setToken(access_token);
-        });
-        await getValueFor("email").then((email) => {
-          setEmail(email);
-        });
-        await getValueFor("password").then((password) => {
-          setPassword(password);
-        });
-        await getLocalValueFor("user_info").then((user_info) => {
-          setUserInfo(JSON.parse(user_info));
-        });
-        await updateAccessToken();
-        await updateUserInfo();
         await SplashScreen.preventAutoHideAsync();
         await Font.loadAsync({
           bold: require("./assets/fonts/Montserrat-Bold.ttf"),
@@ -88,6 +74,23 @@ export default function App() {
     }
 
     getAppReady();
+  }, []);
+
+  useEffect(async () => {
+    await getValueFor("access_token").then((access_token) => {
+      setToken(access_token);
+    });
+    await getValueFor("email").then((email) => {
+      setEmail(email);
+    });
+    await getValueFor("password").then((password) => {
+      setPassword(password);
+    });
+    await getLocalValueFor("user_info").then((user_info) => {
+      setUserInfo(JSON.parse(user_info));
+    });
+    await updateAccessToken();
+    await updateUserInfo();
   }, []);
 
   const updateAccessToken = useCallback(async () => {
