@@ -24,6 +24,8 @@ import {
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 export default function Home({ navigation }) {
+  const [courseCode, setCourseCode] = useState("");
+  const [courseTitle, setCourseTitle] = useState("");
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogvisible, setIsDialogVisible] = useState(false);
@@ -32,9 +34,67 @@ export default function Home({ navigation }) {
   const [searchQuery, setSearchQuery] = useState(""); // State to handle search query
   const [filteredCourses, setFilteredCourses] = useState(courses); // State to hold filtered courses
   const [refreshing, setRefreshing] = useState(false); // State to handle refresh
+  const [isModalvisible, setIsModalVisible] = useState(false);
+  const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
+  const showErrorDialog = () => setIsErrorDialogVisible(true);
+
+  const hideErrorDialog = () => setIsErrorDialogVisible(false);
+
   const showDialog = () => setIsDialogVisible(true);
+  const showModal = () => setIsModalVisible(true);
+
+  const hideModal = () => setIsModalVisible(false);
+  const containerStyle = {
+    backgroundColor: "white",
+    padding: 20,
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    flex: 0.1,
+    borderRadius: 25,
+    margin: 50,
+  };
+  const options = {
+    method: "POST",
+    url: "https://qrollease-api-112d897b35ef.herokuapp.com/api/courses",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
+    },
+    data: {
+      course_code: courseCode,
+      course_title: courseTitle,
+    },
+  };
+
+  const options2 = {
+    method: "POST",
+    url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/staffs/me/courses/add?course_code=${courseCode}`,
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
+    },
+    data: {
+      course_code: courseCode,
+      course_title: courseTitle,
+    },
+  };
 
   const hideDialog = () => setIsDialogVisible(false);
+  const isInputValid = () => courseCode !== "" && courseTitle !== "";
+  const handleCreateCourse = async () => {
+    if (isInputValid()) {
+      hideDialog();
+      showModal();
+      await axios(options);
+      await axios(options2);
+      hideModal();
+    } else {
+      showErrorDialog();
+    }
+  };
+
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -78,7 +138,7 @@ export default function Home({ navigation }) {
         { headers }
       );
       setCourses(response.data);
-      console.log(response.data);
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching courses:", error);
@@ -220,6 +280,18 @@ export default function Home({ navigation }) {
             </View>
           )}
         </View>
+
+        <Modal
+          visible={isModalvisible}
+          onDismiss={hideModal}
+          contentContainerStyle={containerStyle}
+          dismissable={false}
+        >
+          <ActivityIndicator animating={true} color="#40cbc3" />
+          <Text style={{ fontFamily: "bold" }}>
+            Course Creation in progress
+          </Text>
+        </Modal>
         <Dialog
           visible={isDialogvisible}
           onDismiss={hideDialog}
@@ -234,7 +306,6 @@ export default function Home({ navigation }) {
             <View
               style={{
                 flexDirection: "column",
-
                 alignItems: "center",
               }}
             >
@@ -246,19 +317,22 @@ export default function Home({ navigation }) {
             <View
               style={{
                 flexDirection: "row",
-                // marginVertical: 10,
+
                 width: "100%",
                 backgroundColor: "white",
-                borderRadius: 25,
-                height: 50,
-                marginBottom: 20,
+
                 justifyContent: "center",
-                padding: 20,
               }}
             >
               <TextInput
                 label={
-                  <Text style={{ fontFamily: "bold", color: "black" }}>
+                  <Text
+                    style={{
+                      fontFamily: "semibold",
+                      color: "black",
+                      fontSize: 14,
+                    }}
+                  >
                     Course Code
                   </Text>
                 }
@@ -266,7 +340,7 @@ export default function Home({ navigation }) {
                 activeUnderlineColor="#40cbc3"
                 underlineColor="black"
                 cursorColor="black"
-                onChangeText={(text) => setPassword(text)}
+                onChangeText={(text) => setCourseCode(text)}
                 contentStyle={{ fontFamily: "medium", color: "black" }}
                 // onChangeText={(text) => setEmail(text)}
               />
@@ -275,25 +349,37 @@ export default function Home({ navigation }) {
             <View
               style={{
                 flexDirection: "row",
-                marginVertical: 10,
+
+                width: "100%",
+                backgroundColor: "white",
+
+                justifyContent: "center",
               }}
             >
               <TextInput
                 label={
-                  <Text style={{ fontFamily: "bold", color: "black" }}>
-                    Email
+                  <Text
+                    style={{
+                      fontFamily: "semibold",
+                      color: "black",
+                      fontSize: 14,
+                    }}
+                  >
+                    Course Title
                   </Text>
                 }
-                style={{ width: "100%" }}
-                activeUnderlineColor="transparent"
-                underlineColor="transparent"
+                style={{ width: "100%", height: 50, backgroundColor: "white" }}
+                activeUnderlineColor="#40cbc3"
+                underlineColor="black"
                 cursorColor="black"
+                onChangeText={(text) => setCourseTitle(text)}
+                contentStyle={{ fontFamily: "medium", color: "black" }}
                 // onChangeText={(text) => setEmail(text)}
               />
             </View>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
-            <Pressable style={styles.createBtn} onPress={hideDialog}>
+            <Pressable style={styles.createBtn} onPress={handleCreateCourse}>
               <Text
                 style={{
                   alignSelf: "center",
@@ -301,7 +387,44 @@ export default function Home({ navigation }) {
                   fontFamily: "bold",
                 }}
               >
-                Create
+                CREATE
+              </Text>
+            </Pressable>
+          </Dialog.Actions>
+        </Dialog>
+        <Dialog
+          visible={isErrorDialogVisible}
+          onDismiss={hideErrorDialog}
+          style={{
+            backgroundColor: "white",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+          }}
+        >
+          <Dialog.Title style={{ textAlign: "center" }}>
+            <Entypo name="circle-with-cross" size={36} color="red" />
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text
+              style={{ textAlign: "center", fontFamily: "bold" }}
+              variant="bodyMedium"
+            >
+              All fields are required!
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions style={{ alignSelf: "center" }}>
+            <Pressable
+              style={styles.dismissBtn}
+              onPress={() => hideErrorDialog()}
+            >
+              <Text
+                style={{
+                  alignSelf: "center",
+                  color: "white",
+                  fontFamily: "bold",
+                }}
+              >
+                Gotcha!
               </Text>
             </Pressable>
           </Dialog.Actions>
@@ -393,6 +516,14 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   createBtn: {
+    width: "80%",
+    backgroundColor: "#40cbc3",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dismissBtn: {
     width: "80%",
     backgroundColor: "#40cbc3",
     borderRadius: 25,
