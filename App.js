@@ -15,6 +15,7 @@ export default function App() {
   const [password, setPassword] = useState(null);
   const [token, setToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const [lecturesData, setLecturesData] = useState({});
 
   const contextValue = useMemo(
     () => ({
@@ -23,8 +24,18 @@ export default function App() {
       updateAccessToken,
       userInfo,
       setUserInfo,
+      lecturesData,
+      setLecturesData,
     }),
-    [token, setToken, updateAccessToken, userInfo, setUserInfo]
+    [
+      token,
+      setToken,
+      updateAccessToken,
+      userInfo,
+      setUserInfo,
+      lecturesData,
+      setLecturesData,
+    ]
   );
 
   const options = {
@@ -75,6 +86,10 @@ export default function App() {
 
     getAppReady();
   }, []);
+
+  useEffect(() => {
+    console.log(lecturesData);
+  });
 
   useEffect(async () => {
     await getValueFor("access_token").then((access_token) => {

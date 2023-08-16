@@ -5,20 +5,58 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { AppContext } from "../context/AppContext";
+
+import axios from "axios";
 
 export default function CourseDetails({ route, navigation }) {
   const { courseItem } = route.params;
-
-  const lectures = [
-    {
-      id: 1,
-      lecture_description: "Lecture 1",
-      lecture_location: "NNB",
+  const { token, setToken, userInfo, setLecturesData, lecturesData } =
+    useContext(AppContext);
+  const initialLectures = lecturesData[courseItem.course_code] || [];
+  const [lectures, setLectures] = useState(initialLectures);
+  const options = {
+    method: "GET",
+    url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/lectures/${courseItem.course_code}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
     },
-    { id: 2, lecture_description: "Lecture 2", lecture_location: "JQB" },
-  ];
+  };
+
+  const updateLectures = async (courseId) => {
+    try {
+      const response = await axios(options);
+      setLecturesData((prevData) => ({
+        ...prevData,
+        [courseId]: response.data,
+      }));
+      setLectures(response.data); // Update local state with fresh data
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    const fetchLectures = async () => {
+      try {
+        const response = await axios(options);
+        updateLectures(courseItem.course_code, response.data);
+        setLectures(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchLectures(); // Always fetch lectures regardless of the current state
+  }, [courseItem.course_code, setLecturesData]);
+
+  useEffect(() => {
+    if (!lecturesData[courseItem.course_code]) {
+      updateLectures(courseItem.course_code);
+    }
+  }, [courseItem.course_code, lecturesData, setLecturesData]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.lectureItem}>
