@@ -127,11 +127,17 @@ export default function CourseDetails({ route, navigation }) {
   }, [courseItem.course_code, lecturesData, setLecturesData]);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.lectureItem}>
+    <TouchableOpacity
+      onPress={() => handleItemPress(item)}
+      style={styles.lectureItem}
+    >
       <Text style={styles.lectureTitle}>{item.lecture_description}</Text>
       <Text style={styles.lectureDescription}>{item.lecture_location}</Text>
     </TouchableOpacity>
   );
+  const handleItemPress = (item) => {
+    navigation.navigate("LectureDetails", { lectureItem: item });
+  };
 
   return (
     <PaperProvider>
