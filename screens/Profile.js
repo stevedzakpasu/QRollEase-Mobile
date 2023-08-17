@@ -38,7 +38,16 @@ const UserInfoList = ({ data, navigation }) => {
 };
 
 export default function Profile({ navigation }) {
-  const { token, setToken, setUserInfo, userInfo } = useContext(AppContext);
+  const {
+    token,
+    setToken,
+    setUserInfo,
+    userInfo,
+    staffInfo,
+    studentInfo,
+    setStudentInfo,
+    setStaffInfo,
+  } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [isStaff, setIsStaff] = useState(userInfo.is_staff);
 
@@ -48,16 +57,6 @@ export default function Profile({ navigation }) {
   //   email: "Loading",
   //   role: "Loading",
   // });
-
-  const [studentInfo, setStudentInfo] = useState({
-    student_id: "Loading",
-    programme: "Loading",
-  });
-
-  const [staffInfo, setStaffInfo] = useState({
-    staff_id: "Loading",
-    department: "Loading",
-  });
 
   useEffect(() => {
     async function fetchData() {

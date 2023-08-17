@@ -22,19 +22,23 @@ export default function LectureDetails({ route, navigation }) {
     })();
   }, []);
 
+  const [lecture, setLecture] = useState(
+    lecturesData[lectureItem.course_code].find(
+      (lecture) =>
+        lecture.lecture_description === lectureItem.lecture_description
+    )
+  );
   useEffect(() => {
     const generateQRCode = () => {
       setQR(
         CryptoJS.AES.encrypt(
-          lecturesData[lectureItem.course_code].find(
-            (lecture) =>
-              lecture.course_description === lectureItem.lecture_description
-          ),
+          JSON.stringify(lecture),
 
           "ozHwpxU5LosewCDm"
         ).toString()
       );
     };
+    console.log("this is the", lecture);
 
     generateQRCode();
   }, []);

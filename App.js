@@ -16,7 +16,15 @@ export default function App() {
   const [token, setToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [lecturesData, setLecturesData] = useState({});
+  const [studentInfo, setStudentInfo] = useState({
+    student_id: "Loading",
+    programme: "Loading",
+  });
 
+  const [staffInfo, setStaffInfo] = useState({
+    staff_id: "Loading",
+    department: "Loading",
+  });
   const contextValue = useMemo(
     () => ({
       token,
@@ -26,6 +34,10 @@ export default function App() {
       setUserInfo,
       lecturesData,
       setLecturesData,
+      studentInfo,
+      setStudentInfo,
+      staffInfo,
+      setStaffInfo,
     }),
     [
       token,

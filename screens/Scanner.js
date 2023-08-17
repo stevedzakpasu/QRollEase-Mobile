@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-
+import axios from "axios";
+import CryptoJS from "crypto-js";
+import { AppContext } from "../context/AppContext";
 export default function Scanner() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-
+  const { token, studentInfo } = useContext(AppContext);
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -16,8 +18,29 @@ export default function Scanner() {
   }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
+    const bytes = CryptoJS.AES.decrypt(data, "ozHwpxU5LosewCDm");
+    const scanResults = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    const options = {
+      method: "POST",
+      url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/students-attendances`,
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${JSON.parse(token)} `,
+      },
+      data: {
+        student_id: studentInfo.student_id,
+        lecture_id: scanResults.id,
+      },
+    };
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    // axios(options);
+
+    alert(
+      `Bar code with type ${type} and data ${JSON.stringify(
+        scanResults
+      )} has been scanned!`
+    );
   };
 
   if (hasPermission === null) {
