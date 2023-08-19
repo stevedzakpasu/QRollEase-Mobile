@@ -20,7 +20,7 @@ import {
   TextInput,
 } from "react-native-paper";
 import axios from "axios";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 export default function CourseDetails({ route, navigation }) {
   const { courseItem } = route.params;
   const [refreshing, setRefreshing] = useState(false); // State to handle refresh
@@ -35,8 +35,15 @@ export default function CourseDetails({ route, navigation }) {
     borderRadius: 25,
     margin: 50,
   };
-  const { token, setToken, userInfo, setLecturesData, lecturesData } =
-    useContext(AppContext);
+  const {
+    token,
+    setToken,
+    userInfo,
+    setLecturesData,
+    lecturesData,
+    location,
+    setLocation,
+  } = useContext(AppContext);
   const initialLectures = lecturesData[courseItem.course_code] || [];
   const [lectures, setLectures] = useState(initialLectures);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -82,6 +89,16 @@ export default function CourseDetails({ route, navigation }) {
       course_code: courseItem.course_code,
       lecture_description: lectureDescription,
       lecture_location: lectureLocation,
+      is_active: true,
+    },
+  };
+
+  const options3 = {
+    method: "GET",
+    url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/lectures/staff/${courseItem.course_code}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
     },
   };
   const onRefresh = async () => {
@@ -96,12 +113,13 @@ export default function CourseDetails({ route, navigation }) {
 
   const updateLectures = async (courseId) => {
     try {
-      const response = await axios(options);
+      const response = await axios(options3);
       setLecturesData((prevData) => ({
         ...prevData,
         [courseId]: response.data,
       }));
       setLectures(response.data); // Update local state with fresh data
+      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -109,7 +127,7 @@ export default function CourseDetails({ route, navigation }) {
   useEffect(() => {
     const fetchLectures = async () => {
       try {
-        const response = await axios(options);
+        const response = await axios(options3);
         updateLectures(courseItem.course_code);
         setLectures(response.data);
       } catch (error) {
@@ -131,8 +149,21 @@ export default function CourseDetails({ route, navigation }) {
       onPress={() => handleItemPress(item)}
       style={styles.lectureItem}
     >
-      <Text style={styles.lectureTitle}>{item.lecture_description}</Text>
-      <Text style={styles.lectureDescription}>{item.lecture_location}</Text>
+      <View style={{ flexDirection: "column" }}>
+        <Text style={styles.lectureTitle}>{item.lecture_description}</Text>
+        <Text style={styles.lectureDescription}>{item.lecture_location}</Text>
+      </View>
+
+      <View style={{ flexDirection: "column", alignItems: "center" }}>
+        <MaterialCommunityIcons
+          name="record-circle-outline"
+          size={24}
+          color={item.is_active ? "green" : "red"}
+        />
+        <Text style={{ color: item.is_active ? "green" : "red" }}>
+          {item.is_active ? "In Session" : "Closed"}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
   const handleItemPress = (item) => {
@@ -257,7 +288,11 @@ export default function CourseDetails({ route, navigation }) {
                     Lecture Description
                   </Text>
                 }
-                style={{ width: "100%", height: 50, backgroundColor: "white" }}
+                style={{
+                  width: "100%",
+                  height: 50,
+                  backgroundColor: "white",
+                }}
                 activeUnderlineColor="#40cbc3"
                 underlineColor="black"
                 cursorColor="black"
@@ -289,7 +324,11 @@ export default function CourseDetails({ route, navigation }) {
                     Lecture Location
                   </Text>
                 }
-                style={{ width: "100%", height: 50, backgroundColor: "white" }}
+                style={{
+                  width: "100%",
+                  height: 50,
+                  backgroundColor: "white",
+                }}
                 activeUnderlineColor="#40cbc3"
                 underlineColor="black"
                 cursorColor="black"
@@ -337,6 +376,8 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   lectureTitle: {
     fontSize: 18,
@@ -363,5 +404,8 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
+  },
+  map: {
+    flex: 1,
   },
 });
