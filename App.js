@@ -8,9 +8,10 @@ import { save, getValueFor } from "./hooks/SecureStore";
 import { saveLocally, getLocalValueFor } from "./hooks/LocalStorage";
 import { AppContext } from "./context/AppContext";
 import Loading from "./screens/Loading";
-
+import * as Location from "expo-location";
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [location, setLocation] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [token, setToken] = useState(null);
@@ -38,6 +39,8 @@ export default function App() {
       setStudentInfo,
       staffInfo,
       setStaffInfo,
+      location,
+      setLocation,
     }),
     [
       token,
@@ -100,9 +103,21 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    console.log(lecturesData);
-  });
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
+      }
 
+      let device_location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Highest,
+        distanceInterval: 100,
+      });
+      setLocation(device_location);
+      console.log(device_location);
+    })();
+  }, []);
   useEffect(async () => {
     await getValueFor("access_token").then((access_token) => {
       setToken(access_token);

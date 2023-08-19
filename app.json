@@ -20,7 +20,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.codewithsteve.QRollEaseMobile"
+      "package": "com.codewithsteve.QRollEaseMobile",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA3wmp9IGHyJNScBITQUUBU1qajUYvhKbU"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
