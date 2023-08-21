@@ -47,6 +47,7 @@ export default function CourseDetails({ route, navigation }) {
   } = useContext(AppContext);
   const initialLectures = lecturesData[courseItem.course_code] || [];
   const [lectures, setLectures] = useState(initialLectures);
+  const sortedLectures = lectures.slice().sort((a, b) => b.id - a.id);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [attendance, setAttendance] = useState([]);
@@ -165,8 +166,9 @@ export default function CourseDetails({ route, navigation }) {
         console.log(error);
       }
     };
-
-    fetchAttendance(); // Always fetch lectures regardless of the current state
+    if (!userInfo.is_staff) {
+      fetchAttendance();
+    }
   }, []);
 
   useEffect(() => {
@@ -184,35 +186,40 @@ export default function CourseDetails({ route, navigation }) {
       onPress={() => handleItemPress(item)}
       style={styles.lectureItem}
     >
-      {didStudentAttend(studentInfo.student_id, item.id) ? (
-        <Feather
-          style={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            backgroundColor: "green",
-            padding: 5,
-            borderRadius: 5,
-          }}
-          name="user-check"
-          size={20}
-          color="white"
-        />
-      ) : (
-        <Feather
-          style={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            backgroundColor: "red",
-            padding: 5,
-            borderRadius: 5,
-          }}
-          name="user-x"
-          size={20}
-          color="white"
-        />
+      {!userInfo.is_staff && (
+        <View style={{ position: "absolute", top: 0, right: 0 }}>
+          {didStudentAttend(studentInfo.student_id, item.id) ? (
+            <Feather
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                backgroundColor: "green",
+                padding: 5,
+                borderRadius: 5,
+              }}
+              name="user-check"
+              size={20}
+              color="white"
+            />
+          ) : (
+            <Feather
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                backgroundColor: "red",
+                padding: 5,
+                borderRadius: 5,
+              }}
+              name="user-x"
+              size={20}
+              color="white"
+            />
+          )}
+        </View>
       )}
+
       <View style={{ flexDirection: "column" }}>
         <Text style={styles.lectureTitle}>{item.lecture_description}</Text>
         <Text style={styles.lectureDescription}>{item.lecture_location}</Text>
@@ -222,7 +229,6 @@ export default function CourseDetails({ route, navigation }) {
         style={{
           flexDirection: "column",
           alignItems: "center",
-
           width: "20%",
         }}
       >
@@ -242,6 +248,7 @@ export default function CourseDetails({ route, navigation }) {
       </View>
     </TouchableOpacity>
   );
+
   const handleItemPress = (item) => {
     navigation.navigate("LectureDetails", { lectureItem: item });
   };
@@ -250,7 +257,7 @@ export default function CourseDetails({ route, navigation }) {
     <PaperProvider>
       <Portal>
         <View style={styles.container}>
-          <View style={{ flexDirection: "row", marginBottom: 10 }}>
+          <View style={styles.header}>
             <TouchableOpacity style={{ paddingRight: 10, borderRadius: 15 }}>
               <Ionicons
                 name="arrow-back-outline"
@@ -260,13 +267,13 @@ export default function CourseDetails({ route, navigation }) {
               />
             </TouchableOpacity>
 
-            <Text style={styles.header}>
+            <Text style={styles.headerText}>
               {courseItem.course_title} ({courseItem.course_code})
             </Text>
           </View>
 
           <FlatList
-            data={lectures}
+            data={sortedLectures}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={styles.listContent}
@@ -435,7 +442,7 @@ export default function CourseDetails({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  header: {
+  headerText: {
     fontFamily: "bold",
     fontSize: 24,
   },
@@ -484,5 +491,13 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    // justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "5%",
   },
 });
