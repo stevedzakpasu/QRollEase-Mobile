@@ -1,26 +1,26 @@
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import {
-  StyleSheet,
-  Text,
-  View,
   FlatList,
-  TouchableOpacity,
-  RefreshControl,
   Image,
   Pressable,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import React, { useContext, useState, useEffect } from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { AppContext } from "../context/AppContext";
 import {
-  Modal,
-  Portal,
-  PaperProvider,
   ActivityIndicator,
   Dialog,
+  Modal,
+  PaperProvider,
+  Portal,
   TextInput,
 } from "react-native-paper";
-import axios from "axios";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AppContext } from "../context/AppContext";
+import { Feather } from "@expo/vector-icons";
 export default function CourseDetails({ route, navigation }) {
   const { courseItem } = route.params;
   const [refreshing, setRefreshing] = useState(false); // State to handle refresh
@@ -43,11 +43,13 @@ export default function CourseDetails({ route, navigation }) {
     lecturesData,
     location,
     setLocation,
+    studentInfo,
   } = useContext(AppContext);
   const initialLectures = lecturesData[courseItem.course_code] || [];
   const [lectures, setLectures] = useState(initialLectures);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [attendance, setAttendance] = useState([]);
 
   const showDialog = () => setIsDialogVisible(true);
   const showModal = () => setIsModalVisible(true);
@@ -68,6 +70,13 @@ export default function CourseDetails({ route, navigation }) {
       // showErrorDialog();
     }
   };
+  function didStudentAttend(studentId, lectureId) {
+    return attendance.some(
+      (record) =>
+        record.student_id === studentId && record.lecture_id === lectureId
+    );
+  }
+
   const options = {
     method: "GET",
     url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/lectures/${courseItem.course_code}`,
@@ -101,6 +110,14 @@ export default function CourseDetails({ route, navigation }) {
       Authorization: `Bearer ${JSON.parse(token)} `,
     },
   };
+  const options4 = {
+    method: "GET",
+    url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/my_attendance/`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
+    },
+  };
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -113,13 +130,13 @@ export default function CourseDetails({ route, navigation }) {
 
   const updateLectures = async (courseId) => {
     try {
-      const response = await axios(options3);
+      const response = await axios(userInfo.is_staff ? options3 : options);
       setLecturesData((prevData) => ({
         ...prevData,
         [courseId]: response.data,
       }));
       setLectures(response.data); // Update local state with fresh data
-      console.log(response.data);
+      console.log(lecturesData);
     } catch (error) {
       console.log(error);
     }
@@ -127,7 +144,7 @@ export default function CourseDetails({ route, navigation }) {
   useEffect(() => {
     const fetchLectures = async () => {
       try {
-        const response = await axios(options3);
+        const response = await axios(userInfo.is_staff ? options3 : options);
         updateLectures(courseItem.course_code);
         setLectures(response.data);
       } catch (error) {
@@ -137,6 +154,24 @@ export default function CourseDetails({ route, navigation }) {
 
     fetchLectures(); // Always fetch lectures regardless of the current state
   }, [courseItem.course_code, setLecturesData]);
+
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      try {
+        const response = await axios(options4);
+        setAttendance(response.data);
+        console.log(`attendance: ${JSON.stringify(attendance)}`);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchAttendance(); // Always fetch lectures regardless of the current state
+  }, []);
+
+  useEffect(() => {
+    console.log(attendance);
+  });
 
   useEffect(() => {
     if (!lecturesData[courseItem.course_code]) {
@@ -149,19 +184,60 @@ export default function CourseDetails({ route, navigation }) {
       onPress={() => handleItemPress(item)}
       style={styles.lectureItem}
     >
+      {didStudentAttend(studentInfo.student_id, item.id) ? (
+        <Feather
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            backgroundColor: "green",
+            padding: 5,
+            borderRadius: 5,
+          }}
+          name="user-check"
+          size={20}
+          color="white"
+        />
+      ) : (
+        <Feather
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            backgroundColor: "red",
+            padding: 5,
+            borderRadius: 5,
+          }}
+          name="user-x"
+          size={20}
+          color="white"
+        />
+      )}
       <View style={{ flexDirection: "column" }}>
         <Text style={styles.lectureTitle}>{item.lecture_description}</Text>
         <Text style={styles.lectureDescription}>{item.lecture_location}</Text>
       </View>
 
-      <View style={{ flexDirection: "column", alignItems: "center" }}>
+      <View
+        style={{
+          flexDirection: "column",
+          alignItems: "center",
+
+          width: "20%",
+        }}
+      >
         <MaterialCommunityIcons
           name="record-circle-outline"
           size={24}
           color={item.is_active ? "green" : "red"}
         />
-        <Text style={{ color: item.is_active ? "green" : "red" }}>
-          {item.is_active ? "In Session" : "Closed"}
+        <Text
+          style={{
+            fontFamily: "light",
+            color: item.is_active ? "green" : "red",
+          }}
+        >
+          {item.is_active ? "In Session" : "Ended"}
         </Text>
       </View>
     </TouchableOpacity>
@@ -219,18 +295,19 @@ export default function CourseDetails({ route, navigation }) {
               </View>
             }
           />
-
-          <TouchableOpacity
-            style={{
-              position: "absolute", // Required for positioning
-              zIndex: 1,
-              bottom: 55,
-              right: 15,
-            }}
-            onPress={showDialog}
-          >
-            <Ionicons name="md-add-circle-sharp" size={48} color="black" />
-          </TouchableOpacity>
+          {userInfo.is_staff && (
+            <TouchableOpacity
+              style={{
+                position: "absolute", // Required for positioning
+                zIndex: 1,
+                bottom: 55,
+                right: 15,
+              }}
+              onPress={showDialog}
+            >
+              <Ionicons name="md-add-circle-sharp" size={48} color="black" />
+            </TouchableOpacity>
+          )}
         </View>
 
         <Modal
@@ -373,7 +450,7 @@ const styles = StyleSheet.create({
     flex: 1, // Use flex property to fill available horizontal space
     backgroundColor: "#fff",
     borderRadius: 8,
-    padding: 16,
+    padding: 20,
     marginBottom: 12,
     width: "100%",
     flexDirection: "row",

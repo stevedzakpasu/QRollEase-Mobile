@@ -50,6 +50,12 @@ export default function App() {
       setUserInfo,
       lecturesData,
       setLecturesData,
+      studentInfo,
+      setStudentInfo,
+      staffInfo,
+      setStaffInfo,
+      location,
+      setLocation,
     ]
   );
 

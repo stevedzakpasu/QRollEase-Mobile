@@ -266,17 +266,23 @@ export default function Home({ navigation }) {
                   </View>
                 }
               />
-              <TouchableOpacity
-                style={{
-                  position: "absolute", // Required for positioning
-                  zIndex: 1,
-                  bottom: 55,
-                  right: 15,
-                }}
-                onPress={showDialog}
-              >
-                <Ionicons name="md-add-circle-sharp" size={48} color="black" />
-              </TouchableOpacity>
+              {userInfo.is_staff && (
+                <TouchableOpacity
+                  style={{
+                    position: "absolute", // Required for positioning
+                    zIndex: 1,
+                    bottom: 55,
+                    right: 15,
+                  }}
+                  onPress={showDialog}
+                >
+                  <Ionicons
+                    name="md-add-circle-sharp"
+                    size={48}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              )}
             </View>
           )}
         </View>

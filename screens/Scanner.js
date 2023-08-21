@@ -17,7 +17,7 @@ export default function Scanner() {
     getBarCodeScannerPermissions();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     const bytes = CryptoJS.AES.decrypt(data, "ozHwpxU5LosewCDm");
     const scanResults = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     const options = {
@@ -30,11 +30,21 @@ export default function Scanner() {
       },
       data: {
         student_id: studentInfo.student_id,
-        lecture_id: scanResults.id,
+        lecture_secret: scanResults.lecture_secret,
+      },
+    };
+    const options2 = {
+      method: "POST",
+      url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me/courses/add?course_code=${scanResults.course_code}`,
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${JSON.parse(token)} `,
       },
     };
     setScanned(true);
-    // axios(options);
+    await axios(options2).catch((err) => console.log(`options2 err`));
+    await axios(options).catch((err) => console.log(`options err`));
 
     alert(
       `Bar code with type ${type} and data ${JSON.stringify(
@@ -53,7 +63,7 @@ export default function Scanner() {
   return (
     <View style={styles.container}>
       <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        onBarCodeScanned={scanned ? null : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
       />
       {scanned && (

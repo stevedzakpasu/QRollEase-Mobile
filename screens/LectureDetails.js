@@ -10,7 +10,7 @@ import MapView, { PROVIDER_GOOGLE, Marker, Circle } from "react-native-maps";
 export default function LectureDetails({ route, navigation }) {
   const [QR, setQR] = useState("");
   const { lectureItem } = route.params;
-  const { lecturesData, location } = useContext(AppContext);
+  const { lecturesData, location, userInfo } = useContext(AppContext);
   // const [lectureInfo, setLectureInfo] = useState(
   //   lecturesData[lectureItem.course_code].find((lecture) => lecture.id === 1)
   // );
@@ -33,7 +33,7 @@ export default function LectureDetails({ route, navigation }) {
     const generateQRCode = () => {
       setQR(
         CryptoJS.AES.encrypt(
-          JSON.stringify(lecture.lecture_secret),
+          JSON.stringify(lecture),
 
           "ozHwpxU5LosewCDm"
         ).toString()
@@ -70,10 +70,11 @@ export default function LectureDetails({ route, navigation }) {
           {lectureItem.lecture_description} - {lectureItem.course_code}
           {"   "}
           <Text style={{ color: lectureItem.is_active ? "green" : "red" }}>
-            ({lectureItem.is_active ? "In session" : "Closed"})
+            ({lectureItem.is_active ? "In session" : "Ended"})
           </Text>
         </Text>
       </View>
+
       <Text style={{ fontFamily: "regular", fontSize: 20 }}>
         Created on:{" "}
         <Text style={{ fontFamily: "semibold" }}>
@@ -145,7 +146,7 @@ export default function LectureDetails({ route, navigation }) {
         </MapView>
       </View>
       <View style={styles.qr}>
-        {QR && (
+        {QR && userInfo.is_staff && (
           <>
             <Text
               style={{
@@ -164,25 +165,28 @@ export default function LectureDetails({ route, navigation }) {
             />
           </>
         )}
-        <TouchableOpacity
-          style={{
-            marginVertical: 10,
-            backgroundColor: "red",
-            padding: 12,
-            borderRadius: 10,
-          }}
-        >
-          <Text
+
+        {QR && userInfo.is_staff && (
+          <TouchableOpacity
             style={{
-              textAlign: "center",
-              color: "white",
-              fontFamily: "bold",
-              fontSize: 15,
+              marginVertical: 10,
+              backgroundColor: "red",
+              padding: 12,
+              borderRadius: 10,
             }}
           >
-            End Session
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={{
+                textAlign: "center",
+                color: "white",
+                fontFamily: "bold",
+                fontSize: 15,
+              }}
+            >
+              End Session
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -197,7 +201,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-
+    justifyContent: "space-between",
     padding: 16,
     backgroundColor: "#f0f0f0",
   },
