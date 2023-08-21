@@ -7,16 +7,32 @@ import QRCode from "react-native-qrcode-svg";
 import { AppContext } from "../context/AppContext";
 import CryptoJS from "crypto-js";
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from "react-native-maps";
+import axios from "axios";
 export default function LectureDetails({ route, navigation }) {
   const [QR, setQR] = useState("");
   const { lectureItem } = route.params;
-  const { lecturesData, location, userInfo } = useContext(AppContext);
+  const { lecturesData, location, userInfo, token } = useContext(AppContext);
   // const [lectureInfo, setLectureInfo] = useState(
   //   lecturesData[lectureItem.course_code].find((lecture) => lecture.id === 1)
   // );
+
   const [QRref, setQRref] = useState();
   const [hasPermissions, setHasPermissions] = useState(false);
-
+  const options = {
+    method: "PUT",
+    url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/lectures?lecture_id=${lectureItem.id}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
+      "Content-Type": "application/json",
+    },
+    data: {
+      is_active: false,
+    },
+  };
+  const handleEndSession = async () => {
+    await axios(options);
+  };
   useEffect(() => {
     (async () => {
       setHasPermissions((await MediaLibrary.requestPermissionsAsync()).granted);
@@ -166,7 +182,7 @@ export default function LectureDetails({ route, navigation }) {
           </>
         )}
 
-        {QR && userInfo.is_staff && (
+        {QR && userInfo.is_staff && lectureItem.is_active && (
           <TouchableOpacity
             style={{
               marginVertical: 10,
@@ -174,6 +190,7 @@ export default function LectureDetails({ route, navigation }) {
               padding: 12,
               borderRadius: 10,
             }}
+            onPress={handleEndSession}
           >
             <Text
               style={{
