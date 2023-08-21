@@ -31,6 +31,7 @@ export default function Scanner() {
       data: {
         student_id: studentInfo.student_id,
         lecture_secret: scanResults.lecture_secret,
+        lecture_id: scanResults.id,
       },
     };
     const options2 = {
@@ -43,14 +44,20 @@ export default function Scanner() {
       },
     };
     setScanned(true);
-    await axios(options2).catch((err) => console.log(`options2 err`));
-    await axios(options).catch((err) => console.log(`options err`));
+    await axios(options2);
+    await axios(options);
 
-    alert(
-      `Bar code with type ${type} and data ${JSON.stringify(
-        scanResults
-      )} has been scanned!`
-    );
+    // show a modal until the request is made
+
+    // show appropriate pop up for each case
+
+    // attendance made successfully
+
+    // qr code error
+
+    // already attended
+
+    // setscanned to false idk
   };
 
   if (hasPermission === null) {
@@ -66,9 +73,9 @@ export default function Scanner() {
         onBarCodeScanned={scanned ? null : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
       />
-      {scanned && (
+      {/* {scanned && (
         <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
-      )}
+      )} */}
     </View>
   );
 }
