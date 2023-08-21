@@ -84,7 +84,6 @@ export default function Register({ navigation }) {
       showModal();
       axios(options)
         .then((response) => {
-          console.log(response.data);
           save("email", email);
           save("password", password);
           updateAccessToken();

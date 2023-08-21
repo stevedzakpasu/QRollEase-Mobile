@@ -137,7 +137,7 @@ export default function CourseDetails({ route, navigation }) {
         [courseId]: response.data,
       }));
       setLectures(response.data); // Update local state with fresh data
-      console.log(lecturesData);
+
     } catch (error) {
       console.log(error);
     }
@@ -161,7 +161,7 @@ export default function CourseDetails({ route, navigation }) {
       try {
         const response = await axios(options4);
         setAttendance(response.data);
-        console.log(`attendance: ${JSON.stringify(attendance)}`);
+   
       } catch (error) {
         console.log(error);
       }
@@ -171,9 +171,7 @@ export default function CourseDetails({ route, navigation }) {
     }
   }, []);
 
-  useEffect(() => {
-    console.log(attendance);
-  });
+
 
   useEffect(() => {
     if (!lecturesData[courseItem.course_code]) {

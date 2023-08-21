@@ -121,7 +121,6 @@ export default function App() {
         distanceInterval: 100,
       });
       setLocation(device_location);
-      console.log(device_location);
     })();
   }, []);
   useEffect(async () => {
