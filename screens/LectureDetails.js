@@ -56,7 +56,7 @@ export default function LectureDetails({ route, navigation }) {
   };
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: "row", marginBottom: 10 }}>
+      <View style={styles.header}>
         <TouchableOpacity style={{ paddingRight: 10, borderRadius: 15 }}>
           <Ionicons
             name="arrow-back-outline"
@@ -66,7 +66,7 @@ export default function LectureDetails({ route, navigation }) {
           />
         </TouchableOpacity>
 
-        <Text style={styles.header}>
+        <Text style={styles.headerText}>
           {lectureItem.lecture_description} - {lectureItem.course_code}
           {"   "}
           <Text style={{ color: lectureItem.is_active ? "green" : "red" }}>
@@ -193,7 +193,7 @@ export default function LectureDetails({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  header: {
+  headerText: {
     fontFamily: "bold",
     fontSize: 24,
   },
@@ -212,5 +212,13 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    // justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "5%",
   },
 });
