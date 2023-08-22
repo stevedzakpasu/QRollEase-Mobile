@@ -12,6 +12,9 @@ import AdInformation from "../screens/AdInformation";
 import VerifyEmail from "../screens/VerifyEmail";
 import ResetPassword from "../screens/ResetPassword";
 import Loading from "../screens/Loading";
+import Mapview from "../screens/Mapview";
+import Scanner from "../screens/Scanner";
+import ScanConfirm from "../screens/ScanConfirm";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +37,7 @@ export function HomeStack() {
       <Stack.Screen name="Course" component={Home} />
       <Stack.Screen name="CourseDetails" component={CourseDetails} />
       <Stack.Screen name="LectureDetails" component={LectureDetails} />
+      <Stack.Screen name="Mapview" component={Mapview} />
     </Stack.Navigator>
   );
 }
@@ -51,6 +55,14 @@ export function UnverifiedStack() {
       <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
       <Stack.Screen name="AdInformation" component={AdInformation} />
       <Stack.Screen name="Loading" component={Loading} />
+    </Stack.Navigator>
+  );
+}
+export function ScanningStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Scanning" component={Scanner} />
+      <Stack.Screen name="ScanConfirm" component={ScanConfirm} />
     </Stack.Navigator>
   );
 }

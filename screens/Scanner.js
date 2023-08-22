@@ -4,7 +4,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import axios from "axios";
 import CryptoJS from "crypto-js";
 import { AppContext } from "../context/AppContext";
-export default function Scanner() {
+export default function Scanner({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const { token, studentInfo } = useContext(AppContext);
@@ -20,34 +20,16 @@ export default function Scanner() {
   const handleBarCodeScanned = async ({ type, data }) => {
     const bytes = CryptoJS.AES.decrypt(data, "ozHwpxU5LosewCDm");
     const scanResults = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    const options = {
-      method: "POST",
-      url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/students-attendances`,
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${JSON.parse(token)} `,
-      },
-      data: {
-        student_id: studentInfo.student_id,
-        lecture_secret: scanResults.lecture_secret,
-        lecture_id: scanResults.id,
-      },
-    };
-    const options2 = {
-      method: "POST",
-      url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me/courses/add?course_code=${scanResults.course_code}`,
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${JSON.parse(token)} `,
-      },
-    };
-    setScanned(true);
-    await axios(options2);
-    await axios(options);
 
-    // show a modal until the request is made
+    setScanned(true);
+
+    if (scanResults.lecture_secret) {
+      navigation.navigate("ScanConfirm", { scanResults });
+      // set scanned to false
+    }
+
+    // else it means the qr code was not recognized
+    // show a pop up that on confirmation sets scanned to false
 
     // show appropriate pop up for each case
 

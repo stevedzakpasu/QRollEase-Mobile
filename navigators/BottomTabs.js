@@ -1,8 +1,7 @@
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { HomeStack, UserProfileStack } from "./Stacks";
+import { HomeStack, ScanningStack, UserProfileStack } from "./Stacks";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Scanner from "../screens/Scanner";
 import { AppContext } from "../context/AppContext";
 import { useContext } from "react";
 const Tab = createBottomTabNavigator();
@@ -34,7 +33,7 @@ export function BottomTabs() {
       {!userInfo.is_staff ? (
         <Tab.Screen
           name="Scanner"
-          component={Scanner}
+          component={ScanningStack}
           options={{
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="camera" color={color} size={size} />
