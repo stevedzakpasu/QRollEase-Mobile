@@ -85,6 +85,9 @@ export default function App() {
     },
   };
   useEffect(() => {
+    console.log(location);
+  });
+  useEffect(() => {
     async function getAppReady() {
       try {
         await SplashScreen.preventAutoHideAsync();
@@ -106,6 +109,19 @@ export default function App() {
     }
 
     getAppReady();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
+      }
+
+      let device_location = await Location.getLastKnownPositionAsync();
+      setLocation(device_location);
+    })();
   }, []);
 
   useEffect(() => {

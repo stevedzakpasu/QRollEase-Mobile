@@ -62,9 +62,7 @@ export default function CourseDetails({ route, navigation }) {
     lectureLocation !== "" && lectureDescription !== "";
   const handleCreateLecture = async () => {
     if (isInputValid()) {
-      hideDialog();
-      showModal();
-      await axios(options2);
+      navigation.navigate("Mapview", { courseItem: courseItem });
       hideModal();
     } else {
       // error handling
@@ -137,7 +135,6 @@ export default function CourseDetails({ route, navigation }) {
         [courseId]: response.data,
       }));
       setLectures(response.data); // Update local state with fresh data
-
     } catch (error) {
       console.log(error);
     }
@@ -161,7 +158,6 @@ export default function CourseDetails({ route, navigation }) {
       try {
         const response = await axios(options4);
         setAttendance(response.data);
-   
       } catch (error) {
         console.log(error);
       }
@@ -170,8 +166,6 @@ export default function CourseDetails({ route, navigation }) {
       fetchAttendance();
     }
   }, []);
-
-
 
   useEffect(() => {
     if (!lecturesData[courseItem.course_code]) {
@@ -308,7 +302,9 @@ export default function CourseDetails({ route, navigation }) {
                 bottom: 55,
                 right: 15,
               }}
-              onPress={showDialog}
+              onPress={() =>
+                navigation.navigate("Mapview", { courseItem: courseItem })
+              }
             >
               <Ionicons name="md-add-circle-sharp" size={48} color="black" />
             </TouchableOpacity>
@@ -429,7 +425,7 @@ export default function CourseDetails({ route, navigation }) {
                   fontFamily: "bold",
                 }}
               >
-                CREATE
+                NEXT
               </Text>
             </Pressable>
           </Dialog.Actions>

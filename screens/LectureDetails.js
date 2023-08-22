@@ -55,7 +55,6 @@ export default function LectureDetails({ route, navigation }) {
         ).toString()
       );
     };
-    console.log("this is the", lecture);
 
     generateQRCode();
   }, []);
@@ -139,16 +138,22 @@ export default function LectureDetails({ route, navigation }) {
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           initialRegion={{
-            latitude: 5.74291667,
-            longitude: -0.02019444,
+            latitude: lectureItem.latitude,
+            longitude: lectureItem.longitude,
+            latitudeDelta: 0.001, // Adjust the zoom level here
+            longitudeDelta: 0.001, // Adjust the zoom level here
+          }}
+          region={{
+            latitude: lectureItem.latitude,
+            longitude: lectureItem.longitude,
             latitudeDelta: 0.001, // Adjust the zoom level here
             longitudeDelta: 0.001, // Adjust the zoom level here
           }}
         >
           <Marker
             coordinate={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
+              latitude: lectureItem.latitude,
+              longitude: lectureItem.longitude,
             }}
           />
           {/* <Circle
