@@ -29,7 +29,14 @@ export default function Home({ navigation }) {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogvisible, setIsDialogVisible] = useState(false);
-  const { token, setToken, userInfo } = useContext(AppContext);
+  const {
+    token,
+    setToken,
+    userInfo,
+    setStaffInfo,
+    setStudentInfo,
+    setAttendance,
+  } = useContext(AppContext);
   const [showSearchBar, setShowSearchBar] = useState(false); // State to handle search bar visibility
   const [searchQuery, setSearchQuery] = useState(""); // State to handle search query
   const [filteredCourses, setFilteredCourses] = useState(courses); // State to hold filtered courses
@@ -44,6 +51,61 @@ export default function Home({ navigation }) {
   const showModal = () => setIsModalVisible(true);
 
   const hideModal = () => setIsModalVisible(false);
+  const apiUrl =
+    "https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me";
+
+  const staffApiUrl =
+    "https://qrollease-api-112d897b35ef.herokuapp.com/api/staffs/me";
+
+  const [isStaff, setIsStaff] = useState(userInfo.is_staff);
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      try {
+        const response = await axios(options4);
+        setAttendance(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (!isStaff) {
+      fetchAttendance();
+    }
+  }, []);
+
+  const options4 = {
+    method: "GET",
+    url: `https://qrollease-api-112d897b35ef.herokuapp.com/api/my_attendance/`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
+    },
+  };
+  useEffect(() => {
+    async function fetchData() {
+      const options = {
+        method: "GET",
+        url: isStaff ? staffApiUrl : apiUrl,
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${JSON.parse(token)}`,
+        },
+      };
+
+      try {
+        const InfoResponse = await axios(options);
+
+        {
+          !isStaff
+            ? setStudentInfo(InfoResponse.data)
+            : setStaffInfo(InfoResponse.data);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
   const containerStyle = {
     backgroundColor: "white",
     padding: 20,
@@ -84,14 +146,17 @@ export default function Home({ navigation }) {
   const hideDialog = () => setIsDialogVisible(false);
   const isInputValid = () => courseCode !== "" && courseTitle !== "";
   const handleCreateCourse = async () => {
-    if (isInputValid()) {
+    try {
       hideDialog();
       showModal();
       await axios(options);
       await axios(options2);
       hideModal();
-    } else {
+    } catch (error) {
+      // Handle errors here
       showErrorDialog();
+      // You can also display an error message to the user if needed
+      // For example: showErrorModal("An error occurred. Please try again later.");
     }
   };
 
@@ -266,24 +331,20 @@ export default function Home({ navigation }) {
                   </View>
                 }
               />
-              {userInfo.is_staff && (
-                <TouchableOpacity
-                  style={{
-                    position: "absolute", // Required for positioning
-                    zIndex: 1,
-                    bottom: 55,
-                    right: 15,
-                  }}
-                  onPress={showDialog}
-                >
-                  <Ionicons
-                    name="md-add-circle-sharp"
-                    size={48}
-                    color="black"
-                  />
-                </TouchableOpacity>
-              )}
             </View>
+          )}
+          {userInfo.is_staff && (
+            <Pressable
+              style={{
+                position: "absolute", // Required for positioning
+                zIndex: 1,
+                bottom: 55,
+                right: 15,
+              }}
+              onPress={showDialog}
+            >
+              <Ionicons name="md-add-circle-sharp" size={60} color="#40cbc3" />
+            </Pressable>
           )}
         </View>
 
@@ -385,11 +446,15 @@ export default function Home({ navigation }) {
             </View>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
-            <Pressable style={styles.createBtn} onPress={handleCreateCourse}>
+            <Pressable
+              style={isInputValid() ? styles.createBtn : styles.greyedOutBtn}
+              onPress={handleCreateCourse}
+              disabled={!isInputValid()}
+            >
               <Text
                 style={{
                   alignSelf: "center",
-                  color: "white",
+                  color: isInputValid() ? "white" : "black",
                   fontFamily: "bold",
                 }}
               >
@@ -415,7 +480,13 @@ export default function Home({ navigation }) {
               style={{ textAlign: "center", fontFamily: "bold" }}
               variant="bodyMedium"
             >
-              All fields are required!
+              An error occurred
+              <Text
+                style={{ textAlign: "center", fontFamily: "bold" }}
+                variant="bodyMedium"
+              >
+                Something went wrong while creating the course
+              </Text>
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
@@ -536,5 +607,16 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
+  },
+  greyedOutBtn: {
+    width: "80%",
+    backgroundColor: "#d3d3d3", // Light grey color
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+
+    opacity: 0.6, // Reduced opacity to visually indicate disabled state
   },
 });

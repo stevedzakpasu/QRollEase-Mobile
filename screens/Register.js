@@ -89,14 +89,12 @@ export default function Register({ navigation }) {
           updateAccessToken();
         })
         .catch((error) => {
-          console.error(error);
+          showDialog();
         })
         .finally(() => {
           hideModal();
           showSuccessDialog();
         });
-    } else {
-      showDialog();
     }
   };
 
@@ -130,15 +128,13 @@ export default function Register({ navigation }) {
               style={{ textAlign: "center", fontFamily: "bold" }}
               variant="bodyMedium"
             >
-              Invalid inputs!
+              Error
             </Text>
             <Text
               style={{ textAlign: "left", fontFamily: "bold" }}
               variant="bodyMedium"
             >
-              Note: {"\n"}
-              1.All fields are required.{"\n"}
-              2. Only University of Ghana email addresses are accepted.
+              Crosscheck the info provided and try again
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
@@ -280,7 +276,11 @@ export default function Register({ navigation }) {
             contentStyle={{ fontFamily: "medium", color: "black" }}
           />
         </View>
-        <TouchableOpacity style={styles.signUpBtn} onPress={handleSignUp}>
+        <TouchableOpacity
+          style={styles.signUpBtn}
+          onPress={handleSignUp}
+          disabled={!isInputValid()}
+        >
           <Text style={styles.loginText}>SIGN UP</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ width: "100%" }}>
@@ -347,5 +347,16 @@ const styles = StyleSheet.create({
   loginText: {
     color: "white",
     fontFamily: "bold",
+  },
+  greyedOutBtn: {
+    width: "80%",
+    backgroundColor: "#d3d3d3", // Light grey color
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginVertical: 10,
+    opacity: 0.6, // Reduced opacity to visually indicate disabled state
   },
 });

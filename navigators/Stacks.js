@@ -15,6 +15,7 @@ import Loading from "../screens/Loading";
 import Mapview from "../screens/Mapview";
 import Scanner from "../screens/Scanner";
 import ScanConfirm from "../screens/ScanConfirm";
+import AttendanceView from "../screens/AttendanceView";
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,7 @@ export function HomeStack() {
       <Stack.Screen name="CourseDetails" component={CourseDetails} />
       <Stack.Screen name="LectureDetails" component={LectureDetails} />
       <Stack.Screen name="Mapview" component={Mapview} />
+      <Stack.Screen name="AttendanceView" component={AttendanceView} />
     </Stack.Navigator>
   );
 }

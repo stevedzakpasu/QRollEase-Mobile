@@ -2,6 +2,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { HomeStack, ScanningStack, UserProfileStack } from "./Stacks";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { AppContext } from "../context/AppContext";
 import { useContext } from "react";
 const Tab = createBottomTabNavigator();
@@ -30,7 +31,7 @@ export function BottomTabs() {
           ),
         }}
       />
-      {!userInfo.is_staff ? (
+      {userInfo.is_staff ? null : (
         <Tab.Screen
           name="Scanner"
           component={ScanningStack}
@@ -40,7 +41,7 @@ export function BottomTabs() {
             ),
           }}
         />
-      ) : null}
+      )}
       <Tab.Screen
         name="User Profile"
         component={UserProfileStack}

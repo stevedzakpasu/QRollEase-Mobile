@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import axios from "axios";
 import CryptoJS from "crypto-js";
-import { AppContext } from "../context/AppContext";
+import { useIsFocused } from "@react-navigation/native";
+import { Button, Dialog, Portal, PaperProvider } from "react-native-paper";
+import { Entypo } from "@expo/vector-icons";
 export default function Scanner({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const { token, studentInfo } = useContext(AppContext);
+  const isFocused = useIsFocused();
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -16,30 +17,25 @@ export default function Scanner({ navigation }) {
 
     getBarCodeScannerPermissions();
   }, []);
+  const [visible, setVisible] = useState(false);
+
+  const showDialog = () => setVisible(true);
+
+  const hideDialog = () => setVisible(false);
 
   const handleBarCodeScanned = async ({ type, data }) => {
-    const bytes = CryptoJS.AES.decrypt(data, "ozHwpxU5LosewCDm");
-    const scanResults = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    try {
+      const bytes = CryptoJS.AES.decrypt(data, "ozHwpxU5LosewCDm");
+      const scanResults = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      setScanned(true);
 
-    setScanned(true);
-
-    if (scanResults.lecture_secret) {
-      navigation.navigate("ScanConfirm", { scanResults });
-      // set scanned to false
+      if (scanResults.lecture_secret) {
+        setScanned(false);
+        navigation.navigate("ScanConfirm", { scanResults });
+      }
+    } catch (error) {
+      showDialog();
     }
-
-    // else it means the qr code was not recognized
-    // show a pop up that on confirmation sets scanned to false
-
-    // show appropriate pop up for each case
-
-    // attendance made successfully
-
-    // qr code error
-
-    // already attended
-
-    // setscanned to false idk
   };
 
   if (hasPermission === null) {
@@ -50,15 +46,62 @@ export default function Scanner({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? null : handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
-      />
-      {/* {scanned && (
-        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
-      )} */}
-    </View>
+    <PaperProvider>
+      <View style={styles.container}>
+        {isFocused ? (
+          <BarCodeScanner
+            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+            style={StyleSheet.absoluteFillObject}
+          />
+        ) : null}
+      </View>
+      <Portal>
+        <Dialog
+          visible={visible}
+          onDismiss={hideDialog}
+          style={{
+            backgroundColor: "white",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+          }}
+        >
+          <Dialog.Title style={{ textAlign: "center" }}>
+            <Entypo name="circle-with-cross" size={36} color="red" />
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text
+              style={{ textAlign: "center", fontFamily: "bold" }}
+              variant="bodyMedium"
+            >
+              Oops, an error occurred.
+            </Text>
+            <Text
+              style={{
+                textAlign: "center",
+                fontFamily: "medium",
+                marginVertical: 5,
+              }}
+              variant="bodyMedium"
+            >
+              The QR code was not recognized
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions style={{ alignSelf: "center" }}>
+            <Pressable style={styles.dismissBtn} onPress={hideDialog}>
+              <Text
+                style={{
+                  alignSelf: "center",
+                  color: "white",
+                  fontFamily: "bold",
+                }}
+              >
+                Gotcha!
+              </Text>
+            </Pressable>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    </PaperProvider>
   );
 }
 
@@ -66,6 +109,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
+    justifyContent: "center",
+  },
+  dismissBtn: {
+    width: "80%",
+    backgroundColor: "#40cbc3",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
     justifyContent: "center",
   },
 });

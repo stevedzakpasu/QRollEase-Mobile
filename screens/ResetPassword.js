@@ -32,8 +32,6 @@ export default function ResetPassword({ navigation }) {
 
   const showSuccessDialog = () => setIsSuccessDialogVisible(true);
 
-  const hideSuccessDialog = () => setIsSuccessDialogVisible(false);
-
   const showErrorDialog = () => setIsErrorDialogVisible(true);
 
   const hideErrorDialog = () => setIsErrorDialogVisible(false);
@@ -83,9 +81,10 @@ export default function ResetPassword({ navigation }) {
           hideModal();
           setCodeInputVisible(true);
         }) // Invoke the hideModal function to hide the modal
-        .catch((err) => console.log(err));
-    } else {
-      showDialog();
+        .catch(() => {
+          showErrorDialog();
+          hideModal();
+        });
     }
   };
 
@@ -101,8 +100,6 @@ export default function ResetPassword({ navigation }) {
           showErrorDialog();
           hideModal();
         });
-    } else {
-      showDialog();
     }
   };
   const handleResetPassword = async () => {
@@ -113,9 +110,10 @@ export default function ResetPassword({ navigation }) {
           hideModal();
           showSuccessDialog();
         }) // Invoke the hideModal function to hide the modal
-        .catch((err) => console.log(err));
-    } else {
-      showDialog();
+        .catch(() => {
+          hideModal();
+          showErrorDialog();
+        });
     }
   };
   return (
@@ -129,19 +127,13 @@ export default function ResetPassword({ navigation }) {
         >
           <ActivityIndicator animating={true} color="#40cbc3" />
           <Text style={{ fontFamily: "bold" }}>
-            <Text style={{ fontFamily: "bold" }}>
-              {codeInputVisible && passwordInputVisible
-                ? "Resetting Password"
-                : codeInputVisible
-                ? "Validating Code"
-                : "Sending Verification Code Via Email"}
-            </Text>
+            <Text style={{ fontFamily: "bold" }}>Just a moment...</Text>
           </Text>
         </Modal>
 
         <Dialog
           visible={isSuccessDialogVisible}
-          onDismiss={hideSuccessDialog}
+          dismissible={false}
           style={{
             backgroundColor: "white",
             justifyContent: "space-evenly",
@@ -254,16 +246,16 @@ export default function ResetPassword({ navigation }) {
               style={{ textAlign: "center", fontFamily: "bold" }}
               variant="bodyMedium"
             >
-              Invalid Verification Code!
+              Error
             </Text>
             <Text
               style={{
                 textAlign: "left",
-                fontFamily: "bold",
+                fontFamily: "regular",
                 marginTop: 15,
               }}
             >
-              Crosscheck the verification code and try again
+              Crosscheck the info provided and try again
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>

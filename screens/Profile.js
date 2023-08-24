@@ -11,11 +11,6 @@ import { AppContext } from "../context/AppContext";
 import { removeItem } from "../hooks/SecureStore";
 import { removeLocalValueFor } from "../hooks/LocalStorage";
 
-const apiUrl =
-  "https://qrollease-api-112d897b35ef.herokuapp.com/api/students/me";
-
-const staffApiUrl =
-  "https://qrollease-api-112d897b35ef.herokuapp.com/api/staffs/me";
 const UserInfoList = ({ data, navigation }) => {
   const handleRowPress = (item) => {
     navigation.navigate("EditScreen", { item });
@@ -38,54 +33,9 @@ const UserInfoList = ({ data, navigation }) => {
 };
 
 export default function Profile({ navigation }) {
-  const {
-    token,
-    setToken,
-    setUserInfo,
-    userInfo,
-    staffInfo,
-    studentInfo,
-    setStudentInfo,
-    setStaffInfo,
-  } = useContext(AppContext);
-  const [loading, setLoading] = useState(true);
+  const { setToken, setUserInfo, userInfo, staffInfo, studentInfo } =
+    useContext(AppContext);
   const [isStaff, setIsStaff] = useState(userInfo.is_staff);
-
-  // const [userInformation, setUserInformation] = useState({
-  //   first_name: "Loading",
-  //   last_name: "Loading",
-  //   email: "Loading",
-  //   role: "Loading",
-  // });
-
-  useEffect(() => {
-    async function fetchData() {
-      const options = {
-        method: "GET",
-        url: isStaff ? staffApiUrl : apiUrl,
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${JSON.parse(token)}`,
-        },
-      };
-
-      try {
-        const InfoResponse = await axios(options);
-
-        {
-          !isStaff
-            ? setStudentInfo(InfoResponse.data)
-            : setStaffInfo(InfoResponse.data);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-
-    fetchData();
-  }, []);
 
   const userData = [
     { label: "First Name", value: userInfo.first_name },
@@ -93,10 +43,7 @@ export default function Profile({ navigation }) {
     { label: "Email", value: userInfo.email },
     {
       label: "Role",
-      value:
-        !loading && !userInfo.is_superuser && !userInfo.is_staff
-          ? "Student"
-          : "Staff",
+      value: !userInfo.is_superuser && !userInfo.is_staff ? "Student" : "Staff",
     },
     {
       label: isStaff ? "Staff ID" : "Student ID",

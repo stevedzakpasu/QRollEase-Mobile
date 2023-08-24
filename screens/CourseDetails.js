@@ -1,6 +1,7 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import {
   FlatList,
   Image,
@@ -26,6 +27,7 @@ export default function CourseDetails({ route, navigation }) {
   const [refreshing, setRefreshing] = useState(false); // State to handle refresh
   const [lectureDescription, setLectureDescription] = useState("");
   const [lectureLocation, setLectureLocation] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const containerStyle = {
     backgroundColor: "white",
     padding: 20,
@@ -44,14 +46,16 @@ export default function CourseDetails({ route, navigation }) {
     location,
     setLocation,
     studentInfo,
+    attendance,
+    setAttendance,
   } = useContext(AppContext);
   const initialLectures = lecturesData[courseItem.course_code] || [];
   const [lectures, setLectures] = useState(initialLectures);
   const sortedLectures = lectures.slice().sort((a, b) => b.id - a.id);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const [attendance, setAttendance] = useState([]);
 
+  const isFocused = useIsFocused();
   const showDialog = () => setIsDialogVisible(true);
   const showModal = () => setIsModalVisible(true);
 
@@ -140,32 +144,39 @@ export default function CourseDetails({ route, navigation }) {
     }
   };
   useEffect(() => {
-    const fetchLectures = async () => {
-      try {
-        const response = await axios(userInfo.is_staff ? options3 : options);
-        updateLectures(courseItem.course_code);
-        setLectures(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    if (isFocused) {
+      // Set refreshing state to trigger RefreshControl
+      setRefreshing(true);
 
-    fetchLectures(); // Always fetch lectures regardless of the current state
-  }, [courseItem.course_code, setLecturesData]);
-
-  useEffect(() => {
-    const fetchAttendance = async () => {
-      try {
-        const response = await axios(options4);
-        setAttendance(response.data);
-      } catch (error) {
-        console.log(error);
+      // Fetch lectures or perform any necessary actions here
+      const fetchLectures = async () => {
+        try {
+          const response = await axios(userInfo.is_staff ? options3 : options);
+          updateLectures(courseItem.course_code);
+          setLectures(response.data);
+          setIsLoading(false);
+        } catch (error) {
+          console.log(error);
+          setIsLoading(false);
+        } finally {
+          setRefreshing(false); // Set refreshing state back to false
+        }
+      };
+      const fetchAttendance = async () => {
+        try {
+          const response = await axios(options4);
+          setAttendance(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      if (!userInfo.is_staff) {
+        fetchAttendance();
       }
-    };
-    if (!userInfo.is_staff) {
-      fetchAttendance();
+
+      fetchLectures();
     }
-  }, []);
+  }, [isFocused, courseItem.course_code, userInfo.is_staff]);
 
   useEffect(() => {
     if (!lecturesData[courseItem.course_code]) {
@@ -268,34 +279,36 @@ export default function CourseDetails({ route, navigation }) {
             data={sortedLectures}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={styles.listContent}
+            contentContainerStyle={{ paddingBottom: 24 }}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             ListEmptyComponent={
-              <View style={styles.imageContainer}>
-                <Image
-                  style={[
-                    styles.image,
-                    {
-                      width: 200,
-                      height: 200,
-                      alignSelf: "center",
-                      flex: 1,
-                      marginVertical: 5,
-                    },
-                  ]} // Add width and height style here
-                  source={require("../assets/images/no-results.png")}
-                  resizeMode="contain" // Use "contain" to fit the image within the specified size
-                />
-                <Text style={{ fontFamily: "semibold", fontSize: 28 }}>
-                  No lectures found
-                </Text>
-              </View>
+              !isLoading && (
+                <View style={styles.imageContainer}>
+                  <Image
+                    style={[
+                      styles.image,
+                      {
+                        width: 200,
+                        height: 200,
+                        alignSelf: "center",
+                        flex: 1,
+                        marginVertical: 5,
+                      },
+                    ]} // Add width and height style here
+                    source={require("../assets/images/no-results.png")}
+                    resizeMode="contain" // Use "contain" to fit the image within the specified size
+                  />
+                  <Text style={{ fontFamily: "semibold", fontSize: 28 }}>
+                    No lectures found
+                  </Text>
+                </View>
+              )
             }
           />
           {userInfo.is_staff && (
-            <TouchableOpacity
+            <Pressable
               style={{
                 position: "absolute", // Required for positioning
                 zIndex: 1,
@@ -306,8 +319,8 @@ export default function CourseDetails({ route, navigation }) {
                 navigation.navigate("Mapview", { courseItem: courseItem })
               }
             >
-              <Ionicons name="md-add-circle-sharp" size={48} color="black" />
-            </TouchableOpacity>
+              <Ionicons name="md-add-circle-sharp" size={60} color="#40cbc3" />
+            </Pressable>
           )}
         </View>
 

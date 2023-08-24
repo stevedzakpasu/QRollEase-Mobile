@@ -67,20 +67,19 @@ export default function Login({ navigation }) {
   const isInputValid = () => email !== "" && password !== "";
 
   const handleLogin = async () => {
-    if (isInputValid()) {
-      showModal();
-      await axios(options1)
-        .then((response) => {
-          save("email", email);
-          save("password", password);
-          save("access_token", JSON.stringify(response.data.access_token));
-          setToken(JSON.stringify(response.data.access_token));
-          navigation.navigate("Loading");
-        })
-        .catch(hideModal);
-    } else {
-      showDialog();
-    }
+    showModal();
+    await axios(options1)
+      .then((response) => {
+        save("email", email);
+        save("password", password);
+        save("access_token", JSON.stringify(response.data.access_token));
+        setToken(JSON.stringify(response.data.access_token));
+        navigation.navigate("Loading");
+      })
+      .catch(() => {
+        hideModal();
+        showDialog();
+      });
   };
   return (
     <PaperProvider>
@@ -112,15 +111,17 @@ export default function Login({ navigation }) {
               style={{ textAlign: "center", fontFamily: "bold" }}
               variant="bodyMedium"
             >
-              Invalid inputs!
+              Invalid credentials
             </Text>
             <Text
-              style={{ textAlign: "left", fontFamily: "bold" }}
+              style={{
+                textAlign: "center",
+                fontFamily: "medium",
+                marginVertical: 5,
+              }}
               variant="bodyMedium"
             >
-              Note: {"\n"}
-              1.All fields are required.{"\n"}
-              2. Only University of Ghana email addresses are accepted.
+              No account found for this email and password combination
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
@@ -177,8 +178,19 @@ export default function Login({ navigation }) {
             contentStyle={{ fontFamily: "medium", color: "black" }}
           />
         </View>
-        <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
-          <Text style={styles.loginText}>SIGN IN</Text>
+        <TouchableOpacity
+          disabled={email == "" || password == "" ? true : false}
+          style={styles.dismissBtn}
+          onPress={handleLogin}
+        >
+          <Text
+            style={{
+              color: "white",
+              fontFamily: "bold",
+            }}
+          >
+            SIGN IN
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ width: "100%" }}>
           <Text
@@ -256,5 +268,16 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
+  },
+  greyedOutBtn: {
+    width: "80%",
+    backgroundColor: "#d3d3d3", // Light grey color
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginVertical: 10,
+    opacity: 0.6, // Reduced opacity to visually indicate disabled state
   },
 });

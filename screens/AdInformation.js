@@ -46,32 +46,55 @@ export default function AdInformation({ navigation }) {
 
   const hideModal = () => setIsModalVisible(false);
 
-  const options1 = {
+  const options2 = {
     method: "POST",
-    url: "https://qrollease-api-112d897b35ef.herokuapp.com/api/users/send_verification_code",
+    url: "https://qrollease-api-112d897b35ef.herokuapp.com/api/staffs",
     headers: {
       accept: "application/json",
+      "Content-Type": "application/json",
       Authorization: `Bearer ${JSON.parse(token)} `,
     },
+    data: {
+      staff_id: identity,
+      department: department,
+      user_id: userInfo.id,
+    },
   };
-
+  const options3 = {
+    method: "POST",
+    url: "https://qrollease-api-112d897b35ef.herokuapp.com/api/students",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${JSON.parse(token)} `,
+    },
+    data: {
+      student_id: identity,
+      programme: department,
+      user_id: userInfo.id,
+    },
+  };
   const isInputValid = () => identity !== "" && department !== "";
 
   const handleCreateIdentity = async () => {
-    if (isInputValid()) {
-      showModal();
-      await axios(options1)
-        .then(() => {
-          hideModal();
-          showSuccessDialog();
-        }) // Invoke the hideModal function to hide the modal
-        .catch((err) => {
-          console.log(err);
-          showErrorDialog();
-          hideModal();
-        });
-    } else {
-      showDialog();
+    console.log({
+      staff_id: identity,
+      department: department,
+      user_id: userInfo.id,
+    });
+    showModal();
+    try {
+      if (userInfo.is_staff) {
+        await axios(options2);
+      } else {
+        await axios(options3);
+      }
+      hideModal();
+      showSuccessDialog();
+    } catch (err) {
+      console.log(err);
+      showErrorDialog();
+      hideModal();
     }
   };
 
@@ -127,7 +150,7 @@ export default function AdInformation({ navigation }) {
             <Pressable
               style={styles.dismissBtn}
               onPress={() => {
-                navigation.navigate("AdInformation");
+                navigation.navigate("Loading");
               }}
             >
               <Text
@@ -144,8 +167,8 @@ export default function AdInformation({ navigation }) {
         </Dialog>
 
         <Dialog
-          visible={isDialogVisible}
-          onDismiss={hideDialog}
+          visible={isErrorDialogVisible}
+          onDismiss={hideErrorDialog}
           style={{
             backgroundColor: "white",
             justifyContent: "space-evenly",
@@ -160,7 +183,7 @@ export default function AdInformation({ navigation }) {
               style={{ textAlign: "center", fontFamily: "bold" }}
               variant="bodyMedium"
             >
-              Invalid inputs!
+              An error occurred
             </Text>
             <Text
               style={{
@@ -169,12 +192,14 @@ export default function AdInformation({ navigation }) {
                 marginTop: 15,
               }}
             >
-              Note: {"\n"}
-              1.All fields are required.{"\n"}
+              Please try again.
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
-            <Pressable style={styles.dismissBtn} onPress={() => hideDialog()}>
+            <Pressable
+              style={styles.dismissBtn}
+              onPress={() => hideErrorDialog()}
+            >
               <Text
                 style={{
                   alignSelf: "center",
@@ -203,22 +228,40 @@ export default function AdInformation({ navigation }) {
             activeUnderlineColor="#40cbc3"
             underlineColor="black"
             cursorColor="black"
-            onChangeText={(text) => setEmail(text)}
+            onChangeText={(text) => setIdentity(text)}
             contentStyle={{ fontFamily: "medium", color: "black" }}
-            editable={false}
             selectTextOnFocus={false}
-            value={userInfo.email}
           />
         </View>
 
-        <TouchableOpacity
+        <View style={styles.inputView}>
+          <TextInput
+            label={
+              <Text
+                style={{ fontFamily: "semibold", color: "black", fontSize: 14 }}
+              >
+                {userInfo.is_staff ? "Department" : "Programme"}
+              </Text>
+            }
+            style={styles.inputText}
+            activeUnderlineColor="#40cbc3"
+            underlineColor="black"
+            cursorColor="black"
+            onChangeText={(text) => setDepartment(text)}
+            contentStyle={{ fontFamily: "medium", color: "black" }}
+            selectTextOnFocus={false}
+          />
+        </View>
+
+        <Pressable
           style={styles.loginBtn}
           onPress={() => {
             handleCreateIdentity();
           }}
+          disabled={identity == "" || department == ""}
         >
           <Text style={styles.loginText}>ADD INFORMATION</Text>
-        </TouchableOpacity>
+        </Pressable>
         <TouchableOpacity
           style={styles.logoutButton}
           onPress={() => {

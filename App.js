@@ -10,6 +10,7 @@ import { AppContext } from "./context/AppContext";
 import Loading from "./screens/Loading";
 import * as Location from "expo-location";
 export default function App() {
+  const [attendance, setAttendance] = useState([]);
   const [appIsReady, setAppIsReady] = useState(false);
   const [location, setLocation] = useState(null);
   const [email, setEmail] = useState(null);
@@ -41,6 +42,8 @@ export default function App() {
       setStaffInfo,
       location,
       setLocation,
+      attendance,
+      setAttendance,
     }),
     [
       token,
@@ -56,6 +59,8 @@ export default function App() {
       setStaffInfo,
       location,
       setLocation,
+      attendance,
+      setAttendance,
     ]
   );
 
@@ -75,6 +80,11 @@ export default function App() {
       client_secret: "",
     },
   };
+  useEffect(() => {
+    if (userInfo) {
+      console.log(userInfo);
+    }
+  });
 
   const options2 = {
     method: "GET",
@@ -84,9 +94,7 @@ export default function App() {
       Authorization: `Bearer ${JSON.parse(token)} `,
     },
   };
-  useEffect(() => {
-    console.log(location);
-  });
+
   useEffect(() => {
     async function getAppReady() {
       try {
@@ -112,48 +120,43 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
-      }
+    const fetchData = async () => {
+      const access_token = await getValueFor("access_token");
+      const email = await getValueFor("email");
+      const password = await getValueFor("password");
+      const user_info = await getLocalValueFor("user_info");
 
-      let device_location = await Location.getLastKnownPositionAsync();
-      setLocation(device_location);
-    })();
+      setToken(access_token);
+      setEmail(email);
+      setPassword(password);
+      setUserInfo(JSON.parse(user_info));
+
+      await updateAccessToken();
+      await updateUserInfo();
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
-    (async () => {
+    const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
         return;
       }
 
-      let device_location = await Location.getCurrentPositionAsync({
+      const lastKnownLocation = await Location.getLastKnownPositionAsync();
+      setLocation(lastKnownLocation);
+
+      const currentLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Highest,
         distanceInterval: 100,
       });
-      setLocation(device_location);
-    })();
-  }, []);
-  useEffect(async () => {
-    await getValueFor("access_token").then((access_token) => {
-      setToken(access_token);
-    });
-    await getValueFor("email").then((email) => {
-      setEmail(email);
-    });
-    await getValueFor("password").then((password) => {
-      setPassword(password);
-    });
-    await getLocalValueFor("user_info").then((user_info) => {
-      setUserInfo(JSON.parse(user_info));
-    });
-    await updateAccessToken();
-    await updateUserInfo();
+      setLocation(currentLocation);
+    };
+
+    getLocation();
   }, []);
 
   const updateAccessToken = useCallback(async () => {
@@ -169,7 +172,7 @@ export default function App() {
   }, []);
 
   const updateUserInfo = useCallback(async () => {
-    if (access_token) {
+    if (token) {
       {
         try {
           const response = await axios(options2);
