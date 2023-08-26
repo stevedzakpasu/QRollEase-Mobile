@@ -9,6 +9,7 @@ import { saveLocally, getLocalValueFor } from "./hooks/LocalStorage";
 import { AppContext } from "./context/AppContext";
 import Loading from "./screens/Loading";
 import * as Location from "expo-location";
+import { StatusBar } from "expo-status-bar";
 export default function App() {
   const [attendance, setAttendance] = useState([]);
   const [appIsReady, setAppIsReady] = useState(false);
@@ -205,6 +206,7 @@ export default function App() {
 
         {!token && <UnauthenticatedStack />}
       </AppContext.Provider>
+      <StatusBar barStyle="dark-content" />
     </NavigationContainer>
   );
 }
