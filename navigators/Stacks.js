@@ -5,7 +5,7 @@ import Profile from "../screens/Profile";
 import Register from "../screens/Register";
 import Welcome from "../screens/Welcome";
 import Home from "../screens/Home";
-import EditScreen from "../screens/EditScreen";
+
 import CourseDetails from "../screens/CourseDetails";
 import LectureDetails from "../screens/LectureDetails";
 import AdInformation from "../screens/AdInformation";
@@ -47,7 +47,6 @@ export function UserProfileStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen name="EditScreen" component={EditScreen} />
     </Stack.Navigator>
   );
 }

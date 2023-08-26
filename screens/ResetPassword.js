@@ -126,9 +126,6 @@ export default function ResetPassword({ navigation }) {
           dismissable={false}
         >
           <ActivityIndicator animating={true} color="#40cbc3" />
-          <Text style={{ fontFamily: "bold" }}>
-            <Text style={{ fontFamily: "bold" }}>Just a moment...</Text>
-          </Text>
         </Modal>
 
         <Dialog
@@ -140,8 +137,8 @@ export default function ResetPassword({ navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ marginVertical: 10 }}>
-            <View
+          <Dialog.Title style={{ alignSelf: "center" }}>
+            {/* <View
               style={{
                 flexDirection: "column",
 
@@ -149,12 +146,12 @@ export default function ResetPassword({ navigation }) {
                 justifyContent: "center",
                 alignSelf: "center",
               }}
-            >
-              <Ionicons name="checkmark-circle-sharp" size={48} color="green" />
-              <Text style={{ textAlign: "center", fontFamily: "bold" }}>
+            > */}
+            <Ionicons name="checkmark-circle-sharp" size={48} color="green" />
+            {/* <Text style={{ textAlign: "center", fontFamily: "bold" }}>
                 Password Reset Successful
               </Text>
-            </View>
+            </View> */}
           </Dialog.Title>
           <Dialog.Content>
             <Text
@@ -210,8 +207,7 @@ export default function ResetPassword({ navigation }) {
                 marginTop: 15,
               }}
             >
-              Note: {"\n"}
-              1.All fields are required.{"\n"}
+              All fields are required.
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
@@ -242,12 +238,6 @@ export default function ResetPassword({ navigation }) {
             <Entypo name="circle-with-cross" size={36} color="red" />
           </Dialog.Title>
           <Dialog.Content>
-            <Text
-              style={{ textAlign: "center", fontFamily: "bold" }}
-              variant="bodyMedium"
-            >
-              Error
-            </Text>
             <Text
               style={{
                 textAlign: "left",

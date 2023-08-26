@@ -20,6 +20,7 @@ import {
   ActivityIndicator,
 } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
+
 export default function ScanConfirm({ route, navigation }) {
   const {
     token,
@@ -53,7 +54,7 @@ export default function ScanConfirm({ route, navigation }) {
   const hideModal = () => setModalVisible(false);
 
   const hasAttended = () => {
-    return attendance.some((item) => item.lecture_id == scanResults.id);
+    return attendance.some((item) => item.lecture_id === scanResults.id);
   };
 
   const handleUpdateLocation = async () => {
@@ -267,9 +268,10 @@ export default function ScanConfirm({ route, navigation }) {
                 fontFamily: "semibold",
                 marginVertical: 15,
                 textAlign: "center",
+                color: "red",
               }}
             >
-              YOIU HAVE ALREADY ATTENDED THIS LECTURE
+              YOU HAVE ALREADY ATTENDED THIS LECTURE
             </Text>
           )}
 
@@ -349,9 +351,12 @@ export default function ScanConfirm({ route, navigation }) {
                 }
                 onPress={handleAttendLecture}
                 disabled={
-                  !distance || distance > 100 || !scanResults.is_active
-                    ? true
-                    : false
+                  !!(
+                    !distance ||
+                    distance > 100 ||
+                    !scanResults.is_active ||
+                    location.mocked
+                  )
                 }
               >
                 <Text
@@ -379,9 +384,6 @@ export default function ScanConfirm({ route, navigation }) {
           dismissable={false}
         >
           <ActivityIndicator animating={true} color="#40cbc3" />
-          <Text style={{ fontFamily: "bold" }}>
-            <Text style={{ fontFamily: "bold" }}>Just a moment...</Text>
-          </Text>
         </Modal>
 
         <Dialog
@@ -393,25 +395,19 @@ export default function ScanConfirm({ route, navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ textAlign: "center" }}>
+          <Dialog.Title style={{ alignSelf: "center" }}>
             <Entypo name="circle-with-cross" size={36} color="red" />
           </Dialog.Title>
           <Dialog.Content>
-            <Text
-              style={{ textAlign: "center", fontFamily: "bold" }}
-              variant="bodyMedium"
-            >
-              Oops, an error occurred.
-            </Text>
             <Text
               style={{
                 textAlign: "center",
                 fontFamily: "medium",
                 marginVertical: 5,
               }}
-              variant="bodyMedium"
             >
-              Your attendance could not be recorded.
+              There was an error while recording your attendance. {"\n"}
+              Please try scanning the code again.
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
@@ -438,7 +434,7 @@ export default function ScanConfirm({ route, navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ textAlign: "center" }}>
+          <Dialog.Title style={{ alignSelf: "center" }}>
             <Feather name="user-check" size={36} color="green" />
           </Dialog.Title>
           <Dialog.Content>
@@ -462,7 +458,7 @@ export default function ScanConfirm({ route, navigation }) {
           <Dialog.Actions style={{ alignSelf: "center" }}>
             <Pressable
               style={styles.dismissBtn}
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate("Course")}
             >
               <Text
                 style={{
@@ -471,7 +467,7 @@ export default function ScanConfirm({ route, navigation }) {
                   fontFamily: "bold",
                 }}
               >
-                Gotcha!
+                GOTCHA!
               </Text>
             </Pressable>
           </Dialog.Actions>

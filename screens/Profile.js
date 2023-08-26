@@ -5,22 +5,19 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  Pressable,
   View,
 } from "react-native";
 import { AppContext } from "../context/AppContext";
 import { removeItem } from "../hooks/SecureStore";
 import { removeLocalValueFor } from "../hooks/LocalStorage";
 
-const UserInfoList = ({ data, navigation }) => {
-  const handleRowPress = (item) => {
-    navigation.navigate("EditScreen", { item });
-  };
-
+const UserInfoList = ({ data }) => {
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.row} onPress={() => handleRowPress(item)}>
+    <View style={styles.row}>
       <Text style={styles.label}>{item.label}</Text>
       <Text style={styles.value}>{item.value}</Text>
-    </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -33,8 +30,14 @@ const UserInfoList = ({ data, navigation }) => {
 };
 
 export default function Profile({ navigation }) {
-  const { setToken, setUserInfo, userInfo, staffInfo, studentInfo } =
-    useContext(AppContext);
+  const {
+    setToken,
+    setUserInfo,
+    userInfo,
+    staffInfo,
+    studentInfo,
+    setAttendance,
+  } = useContext(AppContext);
   const [isStaff, setIsStaff] = useState(userInfo.is_staff);
 
   const userData = [
@@ -43,7 +46,7 @@ export default function Profile({ navigation }) {
     { label: "Email", value: userInfo.email },
     {
       label: "Role",
-      value: !userInfo.is_superuser && !userInfo.is_staff ? "Student" : "Staff",
+      value: !userInfo.is_superuser && !userInfo.is_staff ? "STUDENT" : "STAFF",
     },
     {
       label: isStaff ? "Staff ID" : "Student ID",
@@ -58,31 +61,31 @@ export default function Profile({ navigation }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Profile</Text>
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={() => {
-            setToken(null);
-            setUserInfo(null);
-            removeItem("access_token");
-            removeItem("email");
-            removeItem("password");
-            removeLocalValueFor("user_info");
+      </View>
+      <UserInfoList data={userData} navigation={navigation} />
+      <Pressable
+        style={styles.logoutButton}
+        onPress={() => {
+          setToken(null);
+          setUserInfo(null);
+          setAttendance(null);
+          removeItem("access_token");
+          removeItem("email");
+          removeItem("password");
+          removeLocalValueFor("user_info");
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontFamily: "bold",
+            fontSize: 15,
+            textAlign: "center",
           }}
         >
-          <Text
-            style={{
-              color: "white",
-              fontFamily: "bold",
-              fontSize: 15,
-              textAlign: "center",
-            }}
-          >
-            Logout
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <UserInfoList data={userData} navigation={navigation} />
+          LOGOUT
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -117,17 +120,23 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontFamily: "bold",
-    marginBottom: 10,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: 50,
   },
   logoutButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
+    width: "100%",
     backgroundColor: "red",
-    borderRadius: 10,
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    marginBottom: 10,
   },
 });

@@ -19,8 +19,10 @@ import axios from "axios";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { AppContext } from "../context/AppContext";
 import { removeItem } from "../hooks/SecureStore";
+import { removeLocalValueFor } from "../hooks/LocalStorage";
 export default function AdInformation({ navigation }) {
-  const { userInfo, token, setToken, setUserInfo } = useContext(AppContext);
+  const { userInfo, token, setToken, setUserInfo, setAttendance } =
+    useContext(AppContext);
 
   const [identity, setIdentity] = useState("");
   const [department, setDepartment] = useState("");
@@ -108,9 +110,6 @@ export default function AdInformation({ navigation }) {
           dismissable={false}
         >
           <ActivityIndicator animating={true} color="#40cbc3" />
-          <Text style={{ fontFamily: "bold" }}>
-            <Text style={{ fontFamily: "bold" }}>Adding Info</Text>
-          </Text>
         </Modal>
 
         <Dialog
@@ -122,8 +121,8 @@ export default function AdInformation({ navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ marginVertical: 10 }}>
-            <View
+          <Dialog.Title style={{ alignSelf: "center" }}>
+            {/* <View
               style={{
                 flexDirection: "column",
 
@@ -131,19 +130,19 @@ export default function AdInformation({ navigation }) {
                 justifyContent: "center",
                 alignSelf: "center",
               }}
-            >
-              <Ionicons name="checkmark-circle-sharp" size={48} color="green" />
-              <Text style={{ textAlign: "center", fontFamily: "bold" }}>
-                All done
-              </Text>
-            </View>
+            > */}
+            {/* <Ionicons name="checkmark-circle-sharp" size={48} color="green" /> */}
+            {/* <Text style={{ textAlign: "center", fontFamily: "bold" }}>
+                All done!
+              </Text> */}
+            {/* </View> */}
           </Dialog.Title>
           <Dialog.Content>
             <Text
               style={{ textAlign: "left", fontFamily: "bold" }}
               variant="bodyMedium"
             >
-              You can now access your dashboard
+              You can now access your dashboard.
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
@@ -175,7 +174,7 @@ export default function AdInformation({ navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ textAlign: "center" }}>
+          <Dialog.Title style={{ alignSelf: "center" }}>
             <Entypo name="circle-with-cross" size={36} color="red" />
           </Dialog.Title>
           <Dialog.Content>
@@ -183,16 +182,7 @@ export default function AdInformation({ navigation }) {
               style={{ textAlign: "center", fontFamily: "bold" }}
               variant="bodyMedium"
             >
-              An error occurred
-            </Text>
-            <Text
-              style={{
-                textAlign: "left",
-                fontFamily: "bold",
-                marginTop: 15,
-              }}
-            >
-              Please try again.
+              An error occurred. {"\n"}Please try again.
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
@@ -267,6 +257,7 @@ export default function AdInformation({ navigation }) {
           onPress={() => {
             setToken(null);
             setUserInfo(null);
+            setAttendance(null);
             removeItem("access_token");
             removeItem("email");
             removeItem("password");
@@ -281,7 +272,7 @@ export default function AdInformation({ navigation }) {
               textAlign: "center",
             }}
           >
-            Logout
+            LOGOUT
           </Text>
         </TouchableOpacity>
       </View>
@@ -347,10 +338,13 @@ const styles = StyleSheet.create({
     margin: 50,
   },
   logoutButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
+    width: "80%",
     backgroundColor: "red",
-    borderRadius: 10,
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    marginBottom: 10,
   },
 });

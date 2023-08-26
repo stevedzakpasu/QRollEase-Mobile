@@ -39,10 +39,10 @@ export default function Scanner({ navigation }) {
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return null;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return null;
   }
 
   return (
@@ -65,16 +65,10 @@ export default function Scanner({ navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ textAlign: "center" }}>
+          <Dialog.Title style={{ alignSelf: "center" }}>
             <Entypo name="circle-with-cross" size={36} color="red" />
           </Dialog.Title>
           <Dialog.Content>
-            <Text
-              style={{ textAlign: "center", fontFamily: "bold" }}
-              variant="bodyMedium"
-            >
-              Oops, an error occurred.
-            </Text>
             <Text
               style={{
                 textAlign: "center",

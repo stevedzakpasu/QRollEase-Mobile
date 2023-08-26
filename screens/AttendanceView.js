@@ -88,9 +88,13 @@ export default function AttendanceView({ route, navigation }) {
         </Text>
       </View>
       {loading ? (
-        <Text>Loading attendance...</Text>
+        <Text style={{ fontFamily: "semibold", textAlign: "center" }}>
+          Loading attendance...
+        </Text>
       ) : attendance.length === 0 ? (
-        <Text>No attendees yet.</Text>
+        <Text style={{ fontFamily: "semibold", textAlign: "center" }}>
+          No attendees.
+        </Text>
       ) : (
         <View>
           <Pressable
@@ -110,19 +114,33 @@ export default function AttendanceView({ route, navigation }) {
               }}
             >
               {" "}
-              SEND VIA EMAIL
+              SEND ATTENDANCE SHEET VIA EMAIL
             </Text>
           </Pressable>
           <Text style={{ fontFamily: "medium" }}>
             Total Attendees: {attendance.length}
           </Text>
           <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>Student ID</DataTable.Title>
-            </DataTable.Header>
+            {/* <DataTable.Header>
+              <DataTable.Title
+                // style={{ borderBottomWidth: 1 }}
+                textStyle={{ fontFamily: "bold", color: "black" }}
+              >
+                Student ID
+              </DataTable.Title>
+            </DataTable.Header> */}
             {attendance.map((item) => (
-              <DataTable.Row key={item.student_id}>
-                <DataTable.Cell>{item.student_id}</DataTable.Cell>
+              <DataTable.Row
+                key={item.student_id}
+                style={{
+                  backgroundColor: "#e2e4e9",
+                  borderRadius: 5,
+                  marginVertical: 5,
+                }}
+              >
+                <DataTable.Cell textStyle={{ fontFamily: "medium" }}>
+                  {item.student_id}
+                </DataTable.Cell>
               </DataTable.Row>
             ))}
           </DataTable>

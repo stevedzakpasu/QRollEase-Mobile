@@ -241,7 +241,7 @@ export default function Mapview({ navigation, route }) {
               alignItems: "center",
             }}
           >
-            <Dialog.Title style={{ textAlign: "center" }}>
+            <Dialog.Title style={{ alignSelf: "center" }}>
               <Entypo name="circle-with-cross" size={36} color="red" />
             </Dialog.Title>
             <Dialog.Content>
@@ -283,9 +283,6 @@ export default function Mapview({ navigation, route }) {
             dismissable={false}
           >
             <ActivityIndicator animating={true} color="#40cbc3" />
-            <Text style={{ fontFamily: "bold" }}>
-              Lecture creation in progress
-            </Text>
           </Modal>
         </Portal>
       </View>

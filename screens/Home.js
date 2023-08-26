@@ -23,6 +23,7 @@ import {
 } from "react-native-paper";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 export default function Home({ navigation }) {
   const [courseCode, setCourseCode] = useState("");
   const [courseTitle, setCourseTitle] = useState("");
@@ -44,7 +45,7 @@ export default function Home({ navigation }) {
   const [isModalvisible, setIsModalVisible] = useState(false);
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const showErrorDialog = () => setIsErrorDialogVisible(true);
-
+  const isFocused = useIsFocused();
   const hideErrorDialog = () => setIsErrorDialogVisible(false);
 
   const showDialog = () => setIsDialogVisible(true);
@@ -154,7 +155,9 @@ export default function Home({ navigation }) {
       hideModal();
     } catch (error) {
       // Handle errors here
+      hideModal();
       showErrorDialog();
+      console.error(error);
       // You can also display an error message to the user if needed
       // For example: showErrorModal("An error occurred. Please try again later.");
     }
@@ -171,8 +174,11 @@ export default function Home({ navigation }) {
   };
 
   useEffect(() => {
+    if (isFocused) {
+      setRefreshing(true);
+    }
     fetchCourses();
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     // Filter courses based on the search query whenever searchQuery changes
@@ -208,6 +214,8 @@ export default function Home({ navigation }) {
     } catch (error) {
       console.error("Error fetching courses:", error);
       setLoading(false);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -279,7 +287,7 @@ export default function Home({ navigation }) {
       return (
         <TouchableWithoutFeedback onPress={toggleSearchBar}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>My Courses</Text>
+            <Text style={styles.headerText}>Courses</Text>
             <TouchableOpacity onPress={toggleSearchBar}>
               <Ionicons name="search" size={24} color="black" />
             </TouchableOpacity>
@@ -294,7 +302,7 @@ export default function Home({ navigation }) {
       <Portal>
         <View style={styles.container}>
           {loading ? (
-            <ActivityIndicator size="large" color="#000" />
+            <ActivityIndicator animating={true} color="#40cbc3" />
           ) : (
             <View style={{ flexDirection: "column", flex: 1 }}>
               {renderHeader()}
@@ -310,41 +318,56 @@ export default function Home({ navigation }) {
                   />
                 }
                 ListEmptyComponent={
-                  <View style={styles.imageContainer}>
-                    <Image
-                      style={[
-                        styles.image,
-                        {
-                          width: 200,
-                          height: 200,
-                          alignSelf: "center",
-                          flex: 1,
-                          marginVertical: 5,
-                        },
-                      ]} // Add width and height style here
-                      source={require("../assets/images/no-results.png")}
-                      resizeMode="contain" // Use "contain" to fit the image within the specified size
-                    />
-                    <Text style={{ fontFamily: "semibold", fontSize: 28 }}>
-                      No courses found
-                    </Text>
-                  </View>
+                  !loading && (
+                    <View style={styles.imageContainer}>
+                      <Image
+                        style={[
+                          styles.image,
+                          {
+                            width: 200,
+                            height: 200,
+                            // alignSelf: "center",
+                            // flex: 1,
+                            // marginVertical: 5,
+                          },
+                        ]} // Add width and height style here
+                        source={require("../assets/images/no-results.png")}
+                        resizeMode="contain" // Use "contain" to fit the image within the specified size
+                      />
+                      <Text
+                        style={{
+                          fontFamily: "semibold",
+                          fontSize: 28,
+                          marginTop: 25,
+                        }}
+                      >
+                        No courses found
+                      </Text>
+                    </View>
+                  )
                 }
               />
+              {userInfo.is_staff && (
+                <Pressable
+                  style={{
+                    position: "absolute", // Required for positioning
+
+                    bottom: 55,
+                    right: 15,
+                    padding: 12,
+                    backgroundColor: "#40cbc3",
+                    borderRadius: 8,
+                  }}
+                  onPress={showDialog}
+                >
+                  <Ionicons
+                    name="md-add-circle-sharp"
+                    size={36}
+                    color="white"
+                  />
+                </Pressable>
+              )}
             </View>
-          )}
-          {userInfo.is_staff && (
-            <Pressable
-              style={{
-                position: "absolute", // Required for positioning
-                zIndex: 1,
-                bottom: 55,
-                right: 15,
-              }}
-              onPress={showDialog}
-            >
-              <Ionicons name="md-add-circle-sharp" size={60} color="#40cbc3" />
-            </Pressable>
           )}
         </View>
 
@@ -355,30 +378,27 @@ export default function Home({ navigation }) {
           dismissable={false}
         >
           <ActivityIndicator animating={true} color="#40cbc3" />
-          <Text style={{ fontFamily: "bold" }}>
-            Course Creation in progress
-          </Text>
         </Modal>
         <Dialog
           visible={isDialogvisible}
           onDismiss={hideDialog}
           style={{
             backgroundColor: "white",
-            // justifyContent: "space-between",
+            justifyContent: "space-between",
             alignItems: "center",
-            paddingVertical: 24,
+            // paddingVertical: 24,
           }}
         >
-          <Dialog.Title style={{ textAlign: "center" }}>
-            <View
+          <Dialog.Title style={{ alignSelf: "center" }}>
+            {/* <View
               style={{
                 flexDirection: "column",
                 alignItems: "center",
               }}
-            >
-              <Ionicons name="create" size={55} color="black" />
-              <Text style={{ fontFamily: "semibold" }}>New course</Text>
-            </View>
+            > */}
+            {/* <Ionicons name="create" size={48} color="black" /> */}
+            <Text style={{ fontFamily: "semibold" }}>New Course</Text>
+            {/* </View> */}
           </Dialog.Title>
           <Dialog.Content>
             <View
@@ -416,10 +436,8 @@ export default function Home({ navigation }) {
             <View
               style={{
                 flexDirection: "row",
-
                 width: "100%",
                 backgroundColor: "white",
-
                 justifyContent: "center",
               }}
             >
@@ -472,7 +490,7 @@ export default function Home({ navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ textAlign: "center" }}>
+          <Dialog.Title style={{ alignSelf: "center" }}>
             <Entypo name="circle-with-cross" size={36} color="red" />
           </Dialog.Title>
           <Dialog.Content>
@@ -480,13 +498,7 @@ export default function Home({ navigation }) {
               style={{ textAlign: "center", fontFamily: "bold" }}
               variant="bodyMedium"
             >
-              An error occurred
-              <Text
-                style={{ textAlign: "center", fontFamily: "bold" }}
-                variant="bodyMedium"
-              >
-                Something went wrong while creating the course
-              </Text>
+              Something went wrong while creating the course
             </Text>
           </Dialog.Content>
           <Dialog.Actions style={{ alignSelf: "center" }}>
@@ -528,8 +540,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     borderRadius: 8,
-    padding: 16,
-
+    padding: 20,
+    marginBottom: 12,
     marginVertical: 12,
     width: "100%",
   },
@@ -574,22 +586,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignContent: "center",
     alignItems: "center",
-    // alignSelf: "center",
     width: "100%",
-    // backgroundColor: "black",
     height: 50,
-    // height: 80,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   imageContainer: {
-    width: "100%", // Adjust this based on your layout requirements
-    height: 300, // Adjust this based on your layout requirements
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "center",
+    flex: 1,
   },
   image: {
-    flex: 1,
+    // flex: 1,
     resizeMode: "contain",
   },
   createBtn: {

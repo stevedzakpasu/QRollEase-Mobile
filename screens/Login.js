@@ -18,7 +18,6 @@ import {
 import axios from "axios";
 import { AppContext } from "../context/AppContext";
 import { Entypo } from "@expo/vector-icons";
-import { saveLocally } from "../hooks/LocalStorage";
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -91,7 +90,6 @@ export default function Login({ navigation }) {
           dismissable={false}
         >
           <ActivityIndicator animating={true} color="#40cbc3" />
-          <Text style={{ fontFamily: "bold" }}>Login in progress</Text>
         </Modal>
 
         <Dialog
@@ -103,7 +101,7 @@ export default function Login({ navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ textAlign: "center" }}>
+          <Dialog.Title style={{ alignSelf: "center" }}>
             <Entypo name="circle-with-cross" size={36} color="red" />
           </Dialog.Title>
           <Dialog.Content>

@@ -39,12 +39,9 @@ export default function CourseDetails({ route, navigation }) {
   };
   const {
     token,
-    setToken,
     userInfo,
     setLecturesData,
     lecturesData,
-    location,
-    setLocation,
     studentInfo,
     attendance,
     setAttendance,
@@ -56,8 +53,6 @@ export default function CourseDetails({ route, navigation }) {
   const [isDialogVisible, setIsDialogVisible] = useState(false);
 
   const isFocused = useIsFocused();
-  const showDialog = () => setIsDialogVisible(true);
-  const showModal = () => setIsModalVisible(true);
 
   const hideModal = () => setIsModalVisible(false);
 
@@ -68,9 +63,6 @@ export default function CourseDetails({ route, navigation }) {
     if (isInputValid()) {
       navigation.navigate("Mapview", { courseItem: courseItem });
       hideModal();
-    } else {
-      // error handling
-      // showErrorDialog();
     }
   };
   function didStudentAttend(studentId, lectureId) {
@@ -260,189 +252,197 @@ export default function CourseDetails({ route, navigation }) {
     <PaperProvider>
       <Portal>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity style={{ paddingRight: 10, borderRadius: 15 }}>
-              <Ionicons
-                name="arrow-back-outline"
-                size={24}
-                color="black"
-                onPress={() => navigation.goBack()}
-              />
-            </TouchableOpacity>
+          <View style={{ flexDirection: "column", flex: 1 }}>
+            <View style={styles.header}>
+              <TouchableOpacity style={{ paddingRight: 10, borderRadius: 15 }}>
+                <Ionicons
+                  name="arrow-back-outline"
+                  size={24}
+                  color="black"
+                  onPress={() => navigation.goBack()}
+                />
+              </TouchableOpacity>
 
-            <Text style={styles.headerText}>
-              {courseItem.course_title} ({courseItem.course_code})
-            </Text>
+              <Text style={styles.headerText}>
+                {courseItem.course_title} ({courseItem.course_code})
+              </Text>
+            </View>
+
+            <FlatList
+              data={sortedLectures}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={styles.listContent}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              ListEmptyComponent={
+                !isLoading && (
+                  <View style={styles.imageContainer}>
+                    <Image
+                      style={[
+                        styles.image,
+                        {
+                          width: 200,
+                          height: 200,
+                          // alignSelf: "center",
+                          // flex: 1,
+                          // marginVertical: 5,
+                        },
+                      ]} // Add width and height style here
+                      source={require("../assets/images/no-results.png")}
+                      resizeMode="contain" // Use "contain" to fit the image within the specified size
+                    />
+                    <Text
+                      style={{
+                        fontFamily: "semibold",
+                        fontSize: 28,
+                        marginTop: 25,
+                      }}
+                    >
+                      No lectures found
+                    </Text>
+                  </View>
+                )
+              }
+            />
+            {userInfo.is_staff && (
+              <Pressable
+                style={{
+                  position: "absolute", // Required for positioning
+
+                  bottom: 55,
+                  right: 15,
+                  padding: 12,
+                  backgroundColor: "#40cbc3",
+                  borderRadius: 8,
+                }}
+                onPress={() =>
+                  navigation.navigate("Mapview", { courseItem: courseItem })
+                }
+              >
+                <Ionicons name="md-add-circle-sharp" size={36} color="white" />
+              </Pressable>
+            )}
           </View>
 
-          <FlatList
-            data={sortedLectures}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={{ paddingBottom: 24 }}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            ListEmptyComponent={
-              !isLoading && (
-                <View style={styles.imageContainer}>
-                  <Image
-                    style={[
-                      styles.image,
-                      {
-                        width: 200,
-                        height: 200,
-                        alignSelf: "center",
-                        flex: 1,
-                        marginVertical: 5,
-                      },
-                    ]} // Add width and height style here
-                    source={require("../assets/images/no-results.png")}
-                    resizeMode="contain" // Use "contain" to fit the image within the specified size
-                  />
-                  <Text style={{ fontFamily: "semibold", fontSize: 28 }}>
-                    No lectures found
-                  </Text>
-                </View>
-              )
-            }
-          />
-          {userInfo.is_staff && (
-            <Pressable
-              style={{
-                position: "absolute", // Required for positioning
-                zIndex: 1,
-                bottom: 55,
-                right: 15,
-              }}
-              onPress={() =>
-                navigation.navigate("Mapview", { courseItem: courseItem })
-              }
-            >
-              <Ionicons name="md-add-circle-sharp" size={60} color="#40cbc3" />
-            </Pressable>
-          )}
-        </View>
-
-        <Modal
-          visible={isModalVisible}
-          onDismiss={hideModal}
-          contentContainerStyle={containerStyle}
-          dismissable={false}
-        >
-          <ActivityIndicator animating={true} color="#40cbc3" />
-          <Text style={{ fontFamily: "bold" }}>
-            Lecture Creation in progress
-          </Text>
-        </Modal>
-        <Dialog
-          visible={isDialogVisible}
-          onDismiss={hideDialog}
-          style={{
-            backgroundColor: "white",
-            // justifyContent: "space-between",
-            alignItems: "center",
-            paddingVertical: 24,
-          }}
-        >
-          <Dialog.Title style={{ textAlign: "center" }}>
-            <View
-              style={{
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Ionicons name="create" size={55} color="black" />
-              <Text style={{ fontFamily: "semibold" }}>New Lecture</Text>
-            </View>
-          </Dialog.Title>
-          <Dialog.Content>
-            <View
-              style={{
-                flexDirection: "row",
-
-                width: "100%",
-                backgroundColor: "white",
-
-                justifyContent: "center",
-              }}
-            >
-              <TextInput
-                label={
-                  <Text
-                    style={{
-                      fontFamily: "semibold",
-                      color: "black",
-                      fontSize: 14,
-                    }}
-                  >
-                    Lecture Description
-                  </Text>
-                }
+          <Modal
+            visible={isModalVisible}
+            onDismiss={hideModal}
+            contentContainerStyle={containerStyle}
+            dismissable={false}
+          >
+            <ActivityIndicator animating={true} color="#40cbc3" />
+          </Modal>
+          <Dialog
+            visible={isDialogVisible}
+            onDismiss={hideDialog}
+            style={{
+              backgroundColor: "white",
+              justifyContent: "space-between",
+              alignItems: "center",
+              // paddingVertical: 24,
+            }}
+          >
+            <Dialog.Title style={{ alignSelf: "center" }}>
+              <View
                 style={{
-                  width: "100%",
-                  height: 50,
-                  backgroundColor: "white",
-                }}
-                activeUnderlineColor="#40cbc3"
-                underlineColor="black"
-                cursorColor="black"
-                onChangeText={(text) => setLectureDescription(text)}
-                contentStyle={{ fontFamily: "medium", color: "black" }}
-                // onChangeText={(text) => setEmail(text)}
-              />
-            </View>
-
-            <View
-              style={{
-                flexDirection: "row",
-
-                width: "100%",
-                backgroundColor: "white",
-
-                justifyContent: "center",
-              }}
-            >
-              <TextInput
-                label={
-                  <Text
-                    style={{
-                      fontFamily: "semibold",
-                      color: "black",
-                      fontSize: 14,
-                    }}
-                  >
-                    Lecture Location
-                  </Text>
-                }
-                style={{
-                  width: "100%",
-                  height: 50,
-                  backgroundColor: "white",
-                }}
-                activeUnderlineColor="#40cbc3"
-                underlineColor="black"
-                cursorColor="black"
-                onChangeText={(text) => setLectureLocation(text)}
-                contentStyle={{ fontFamily: "medium", color: "black" }}
-                // onChangeText={(text) => setEmail(text)}
-              />
-            </View>
-          </Dialog.Content>
-          <Dialog.Actions style={{ alignSelf: "center" }}>
-            <Pressable style={styles.createBtn} onPress={handleCreateLecture}>
-              <Text
-                style={{
-                  alignSelf: "center",
-                  color: "white",
-                  fontFamily: "bold",
+                  flexDirection: "column",
+                  alignItems: "center",
                 }}
               >
-                NEXT
-              </Text>
-            </Pressable>
-          </Dialog.Actions>
-        </Dialog>
+                <Ionicons name="create" size={55} color="black" />
+                <Text style={{ fontFamily: "semibold" }}>New Lecture</Text>
+              </View>
+            </Dialog.Title>
+            <Dialog.Content>
+              <View
+                style={{
+                  flexDirection: "row",
+
+                  width: "100%",
+                  backgroundColor: "white",
+
+                  justifyContent: "center",
+                }}
+              >
+                <TextInput
+                  label={
+                    <Text
+                      style={{
+                        fontFamily: "semibold",
+                        color: "black",
+                        fontSize: 14,
+                      }}
+                    >
+                      Lecture Description
+                    </Text>
+                  }
+                  style={{
+                    width: "100%",
+                    height: 50,
+                    backgroundColor: "white",
+                  }}
+                  activeUnderlineColor="#40cbc3"
+                  underlineColor="black"
+                  cursorColor="black"
+                  onChangeText={(text) => setLectureDescription(text)}
+                  contentStyle={{ fontFamily: "medium", color: "black" }}
+                  // onChangeText={(text) => setEmail(text)}
+                />
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+
+                  width: "100%",
+                  backgroundColor: "white",
+
+                  justifyContent: "center",
+                }}
+              >
+                <TextInput
+                  label={
+                    <Text
+                      style={{
+                        fontFamily: "semibold",
+                        color: "black",
+                        fontSize: 14,
+                      }}
+                    >
+                      Lecture Location
+                    </Text>
+                  }
+                  style={{
+                    width: "100%",
+                    height: 50,
+                    backgroundColor: "white",
+                  }}
+                  activeUnderlineColor="#40cbc3"
+                  underlineColor="black"
+                  cursorColor="black"
+                  onChangeText={(text) => setLectureLocation(text)}
+                  contentStyle={{ fontFamily: "medium", color: "black" }}
+                  // onChangeText={(text) => setEmail(text)}
+                />
+              </View>
+            </Dialog.Content>
+            <Dialog.Actions style={{ alignSelf: "center" }}>
+              <Pressable style={styles.createBtn} onPress={handleCreateLecture}>
+                <Text
+                  style={{
+                    alignSelf: "center",
+                    color: "white",
+                    fontFamily: "bold",
+                  }}
+                >
+                  NEXT
+                </Text>
+              </Pressable>
+            </Dialog.Actions>
+          </Dialog>
+        </View>
       </Portal>
     </PaperProvider>
   );
@@ -456,7 +456,9 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 16,
     backgroundColor: "#f0f0f0",
   },
@@ -479,13 +481,13 @@ const styles = StyleSheet.create({
     fontFamily: "medium",
   },
   imageContainer: {
-    width: "100%", // Adjust this based on your layout requirements
-    height: 300, // Adjust this based on your layout requirements
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "center",
+    flex: 1,
   },
   image: {
-    flex: 1,
+    // flex: 1,
     resizeMode: "contain",
   },
   createBtn: {
@@ -506,5 +508,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: "5%",
+  },
+  listContent: {
+    flexGrow: 1,
+    width: "100%",
   },
 });

@@ -71,8 +71,7 @@ export default function LectureDetails({ route, navigation }) {
 
   const [lecture, setLecture] = useState(
     lecturesData[lectureItem.course_code].find(
-      (lecture) =>
-        lecture.lecture_description === lectureItem.lecture_description
+      (lecture) => lecture.lecture_secret === lectureItem.lecture_secret
     )
   );
   useEffect(() => {
@@ -293,7 +292,7 @@ export default function LectureDetails({ route, navigation }) {
               alignItems: "center",
             }}
           >
-            <Dialog.Title style={{ textAlign: "center" }}>
+            <Dialog.Title style={{ alignSelf: "center" }}>
               <Entypo name="circle-with-cross" size={36} color="red" />
             </Dialog.Title>
             <Dialog.Content>
@@ -301,13 +300,8 @@ export default function LectureDetails({ route, navigation }) {
                 style={{ textAlign: "center", fontFamily: "bold" }}
                 variant="bodyMedium"
               >
-                Are you sure you want to end this lecture?
-              </Text>
-              <Text
-                style={{ textAlign: "center", fontFamily: "bold" }}
-                variant="bodyMedium"
-              >
-                This action is irreversible!
+                Are you sure you want to end this lecture?{"\n"} This action is
+                irreversible!
               </Text>
             </Dialog.Content>
             <Dialog.Actions
@@ -362,7 +356,6 @@ export default function LectureDetails({ route, navigation }) {
             dismissable={false}
           >
             <ActivityIndicator animating={true} color="#40cbc3" />
-            <Text style={{ fontFamily: "bold" }}>Ending this session</Text>
           </Modal>
         </Portal>
       </View>

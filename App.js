@@ -80,11 +80,6 @@ export default function App() {
       client_secret: "",
     },
   };
-  useEffect(() => {
-    if (userInfo) {
-      console.log(userInfo);
-    }
-  });
 
   const options2 = {
     method: "GET",
@@ -94,7 +89,9 @@ export default function App() {
       Authorization: `Bearer ${JSON.parse(token)} `,
     },
   };
-
+  useEffect(() => {
+    console.log(attendance);
+  });
   useEffect(() => {
     async function getAppReady() {
       try {
@@ -142,7 +139,6 @@ export default function App() {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        console.log("Permission to access location was denied");
         return;
       }
 
@@ -184,6 +180,9 @@ export default function App() {
       }
     }
   }, []);
+  useEffect(() => {
+    console.log(attendance);
+  });
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {

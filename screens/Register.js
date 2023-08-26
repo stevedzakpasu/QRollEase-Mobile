@@ -108,7 +108,6 @@ export default function Register({ navigation }) {
           dismissable={false}
         >
           <ActivityIndicator animating={true} color="#40cbc3" />
-          <Text>Sign up in progress</Text>
         </Modal>
 
         <Dialog
@@ -120,16 +119,10 @@ export default function Register({ navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ textAlign: "center" }}>
+          <Dialog.Title style={{ alignSelf: "center" }}>
             <Entypo name="circle-with-cross" size={36} color="red" />
           </Dialog.Title>
           <Dialog.Content>
-            <Text
-              style={{ textAlign: "center", fontFamily: "bold" }}
-              variant="bodyMedium"
-            >
-              Error
-            </Text>
             <Text
               style={{ textAlign: "left", fontFamily: "bold" }}
               variant="bodyMedium"
@@ -161,8 +154,8 @@ export default function Register({ navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ marginVertical: 10 }}>
-            <View
+          <Dialog.Title style={{ alignSelf: "center" }}>
+            {/* <View
               style={{
                 flexDirection: "column",
 
@@ -170,12 +163,12 @@ export default function Register({ navigation }) {
                 justifyContent: "center",
                 alignSelf: "center",
               }}
-            >
-              <Ionicons name="checkmark-circle-sharp" size={48} color="green" />
-              <Text style={{ textAlign: "center", fontFamily: "bold" }}>
+            > */}
+            {/* <Ionicons name="checkmark-circle-sharp" size={48} color="green" /> */}
+            {/* <Text style={{ textAlign: "center", fontFamily: "bold" }}>
                 Sign Up Successful
               </Text>
-            </View>
+            </View> */}
           </Dialog.Title>
           <Dialog.Content>
             <Text
@@ -199,7 +192,7 @@ export default function Register({ navigation }) {
                   fontFamily: "bold",
                 }}
               >
-                Login
+                LOGIN
               </Text>
             </Pressable>
           </Dialog.Actions>
