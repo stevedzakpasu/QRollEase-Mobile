@@ -9,6 +9,7 @@ import {
   View,
   Pressable,
   ToastAndroid,
+  ScrollView,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { AppContext } from "../context/AppContext";
@@ -112,7 +113,7 @@ export default function LectureDetails({ route, navigation }) {
   };
   return (
     <PaperProvider>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={{ paddingRight: 10, borderRadius: 15 }}>
             <Ionicons
@@ -358,7 +359,7 @@ export default function LectureDetails({ route, navigation }) {
             <ActivityIndicator animating={true} color="#40cbc3" />
           </Modal>
         </Portal>
-      </View>
+      </ScrollView>
     </PaperProvider>
   );
 }
