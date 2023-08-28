@@ -194,6 +194,7 @@ export default function App() {
 
   return (
     <View style={{ flex: 1, marginTop: Constants.statusBarHeight }}>
+      <StatusBar barStyle="dark-content" />
       <NavigationContainer onReady={onLayoutRootView}>
         <AppContext.Provider value={contextValue}>
           {token && !userInfo && <Loading />}
@@ -204,7 +205,6 @@ export default function App() {
 
           {!token && <UnauthenticatedStack />}
         </AppContext.Provider>
-        <StatusBar barStyle="dark-content" />
       </NavigationContainer>
     </View>
   );
