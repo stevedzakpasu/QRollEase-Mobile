@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, useMemo } from "react";
+import { View } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { NavigationContainer } from "@react-navigation/native";
@@ -10,6 +11,7 @@ import { AppContext } from "./context/AppContext";
 import Loading from "./screens/Loading";
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
+import Constants from "expo-constants";
 export default function App() {
   const [attendance, setAttendance] = useState([]);
   const [appIsReady, setAppIsReady] = useState(false);
@@ -90,9 +92,7 @@ export default function App() {
       Authorization: `Bearer ${JSON.parse(token)} `,
     },
   };
-  useEffect(() => {
-    console.log(attendance);
-  });
+
   useEffect(() => {
     async function getAppReady() {
       try {
@@ -181,9 +181,6 @@ export default function App() {
       }
     }
   }, []);
-  useEffect(() => {
-    console.log(attendance);
-  });
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -196,17 +193,19 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onReady={onLayoutRootView}>
-      <AppContext.Provider value={contextValue}>
-        {token && !userInfo && <Loading />}
+    <View style={{ flex: 1, marginTop: Constants.statusBarHeight }}>
+      <NavigationContainer onReady={onLayoutRootView}>
+        <AppContext.Provider value={contextValue}>
+          {token && !userInfo && <Loading />}
 
-        {token && userInfo && userInfo.is_verified && <BottomTabs />}
+          {token && userInfo && userInfo.is_verified && <BottomTabs />}
 
-        {token && userInfo && !userInfo.is_verified && <UnverifiedStack />}
+          {token && userInfo && !userInfo.is_verified && <UnverifiedStack />}
 
-        {!token && <UnauthenticatedStack />}
-      </AppContext.Provider>
-      <StatusBar barStyle="dark-content" />
-    </NavigationContainer>
+          {!token && <UnauthenticatedStack />}
+        </AppContext.Provider>
+        <StatusBar barStyle="dark-content" />
+      </NavigationContainer>
+    </View>
   );
 }

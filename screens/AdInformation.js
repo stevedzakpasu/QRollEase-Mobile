@@ -79,11 +79,6 @@ export default function AdInformation({ navigation }) {
   const isInputValid = () => identity !== "" && department !== "";
 
   const handleCreateIdentity = async () => {
-    console.log({
-      staff_id: identity,
-      department: department,
-      user_id: userInfo.id,
-    });
     showModal();
     try {
       if (userInfo.is_staff) {

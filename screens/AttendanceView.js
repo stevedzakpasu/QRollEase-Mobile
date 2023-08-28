@@ -13,9 +13,10 @@ import axios from "axios";
 import { AppContext } from "../context/AppContext";
 
 export default function AttendanceView({ route, navigation }) {
-  const { token, attendance, setAttendance } = useContext(AppContext);
+  const { token } = useContext(AppContext);
   const { lectureItem } = route.params;
   const [loading, setLoading] = useState(true);
+  const [attendance, setAttendance] = useState(null);
 
   const options = {
     method: "GET",
@@ -54,24 +55,18 @@ export default function AttendanceView({ route, navigation }) {
       const response = await axios(options2);
 
       if (response.status === 200) {
-        console.log("success");
+        ToastAndroid.show("Attendance Sheet Sent", ToastAndroid.LONG);
         // show a success dialog
       }
     } catch (error) {
       console.error("Error sending attendance:", error);
-      // show error dialog
+      ToastAndroid.show("Could not send attendance sheet", ToastAndroid.LONG);
     }
   };
 
   useEffect(() => {
     fetchAttendance();
   }, []);
-
-  const renderAttendanceItem = ({ item }) => (
-    <View style={styles.attendanceItem}>
-      <Text style={{ fontFamily: "bold" }}>{item.student_id}</Text>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -90,6 +85,10 @@ export default function AttendanceView({ route, navigation }) {
       {loading ? (
         <Text style={{ fontFamily: "semibold", textAlign: "center" }}>
           Loading attendance...
+        </Text>
+      ) : attendance === null ? ( // Check for null attendance
+        <Text style={{ fontFamily: "semibold", textAlign: "center" }}>
+          No data available.
         </Text>
       ) : attendance.length === 0 ? (
         <Text style={{ fontFamily: "semibold", textAlign: "center" }}>
@@ -166,7 +165,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     width: "100%",
-    height: "5%",
+    height: 50,
   },
   attendanceItem: {
     borderBottomWidth: 1,

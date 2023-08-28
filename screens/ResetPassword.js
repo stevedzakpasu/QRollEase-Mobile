@@ -358,14 +358,16 @@ export default function ResetPassword({ navigation }) {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={{ width: "100%" }}>
+        <TouchableOpacity
+          style={{ width: "100%" }}
+          onPress={() => navigation.navigate("Register")}
+        >
           <Text
             style={{
               fontFamily: "regular",
               marginVertical: 20,
               textAlign: "center",
             }}
-            onPress={() => navigation.navigate("Register")}
           >
             Don't have an account yet? Register
           </Text>

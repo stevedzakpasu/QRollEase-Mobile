@@ -190,26 +190,30 @@ export default function Login({ navigation }) {
             SIGN IN
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ width: "100%" }}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ResetPassword")}
+          style={{ width: "100%" }}
+        >
           <Text
             style={{
               fontFamily: "regular",
               marginVertical: 20,
               textAlign: "center",
             }}
-            onPress={() => navigation.navigate("ResetPassword")}
           >
             Do you have trouble login in? Reset your password
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ width: "100%" }}>
+        <TouchableOpacity
+          style={{ width: "100%" }}
+          onPress={() => navigation.navigate("Register")}
+        >
           <Text
             style={{
               fontFamily: "regular",
               marginVertical: 20,
               textAlign: "center",
             }}
-            onPress={() => navigation.navigate("Register")}
           >
             Don't have an account yet? Register
           </Text>
