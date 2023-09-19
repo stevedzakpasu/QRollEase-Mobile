@@ -122,22 +122,7 @@ export default function VerifyEmail({ navigation }) {
             paddingTop: 5,
           }}
         >
-          <Dialog.Title style={{ alignSelf: "center" }}>
-            {/* <View
-              style={{
-                flexDirection: "column",
-
-                alignItems: "center",
-                justifyContent: "center",
-                alignSelf: "center",
-              }}
-            > */}
-            {/* <Ionicons name="checkmark-circle-sharp" size={48} color="green" /> */}
-            {/* <Text style={{ textAlign: "center", fontFamily: "bold" }}>
-                Email Verified
-              </Text> */}
-            {/* </View> */}
-          </Dialog.Title>
+          <Dialog.Title style={{ alignSelf: "center" }}></Dialog.Title>
           <Dialog.Content>
             <Text
               style={{ textAlign: "left", fontFamily: "bold" }}

@@ -115,7 +115,6 @@ export default function ScanConfirm({ route, navigation }) {
 
     const distance = R * c; // Distance in meters
 
-    // Calculate the combined accuracy as a radius of the intersection area
     const combinedAccuracy = Math.sqrt(
       Math.pow(accuracy1, 2) + Math.pow(accuracy2, 2)
     );
@@ -168,8 +167,6 @@ export default function ScanConfirm({ route, navigation }) {
     },
   };
   return (
-    // check if the location is mocked
-
     <PaperProvider>
       <View style={styles.container}>
         <View style={styles.header}>
@@ -181,13 +178,6 @@ export default function ScanConfirm({ route, navigation }) {
               onPress={() => navigation.goBack()}
             />
           </TouchableOpacity>
-
-          {/* <Text style={styles.headerText}>
-          {scanResults.lecture_description} - {scanResults.course_code}
-          <Text style={{ color: scanResults.is_active ? "green" : "red" }}>
-            ({scanResults.is_active ? "In session" : "Ended"})
-          </Text>
-        </Text> */}
           <Text style={styles.headerText}>Lecture Information</Text>
         </View>
 
@@ -203,17 +193,7 @@ export default function ScanConfirm({ route, navigation }) {
             {scanResults.lecture_description}
           </Text>
         </Text>
-        {/* <Text style={{ fontFamily: "regular", fontSize: 20 }}>
-          Status:{" "}
-          <Text
-            style={{
-              fontFamily: "semibold",
-              color: scanResults.is_active ? "green" : "red",
-            }}
-          >
-            {scanResults.is_active ? "Ongoing" : "Ended"}
-          </Text>
-        </Text> */}
+
         <Text style={{ fontFamily: "regular", fontSize: 20 }}>
           Created on:{" "}
           <Text style={{ fontFamily: "semibold" }}>
@@ -231,17 +211,6 @@ export default function ScanConfirm({ route, navigation }) {
             {scanResults.lecture_location}
           </Text>
         </Text>
-        {/* <TouchableOpacity
-        style={{
-          position: "absolute", // Required for positioning
-          zIndex: 1,
-          bottom: 55,
-          right: 15,
-        }}
-        // onPress={showDialog}
-        >
-        <Ionicons name="md-add-circle-sharp" size={48} color="black" />
-    </TouchableOpacity> */}
 
         <View style={{ flex: 1, marginVertical: 15 }}>
           {!hasAttended() ? (
@@ -310,14 +279,6 @@ export default function ScanConfirm({ route, navigation }) {
               description="This is where you are"
               pinColor="blue" // You can use a color name or a hex color code
             />
-            {/* <Circle
-            center={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            }}
-            radius={location.coords.accuracy} // Adjust the radius as needed
-            fillColor="rgba(34, 107, 235, 0.25)"
-          /> */}
           </MapView>
           <Text style={{ fontFamily: "semibold", fontSize: 12, color: "blue" }}>
             Blue Pin - <Text style={{ color: "black" }}>Your Location</Text>
@@ -500,7 +461,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    // justifyContent: "space-between",
     alignContent: "center",
     alignItems: "center",
     width: "100%",

@@ -138,20 +138,7 @@ export default function ResetPassword({ navigation }) {
           }}
         >
           <Dialog.Title style={{ alignSelf: "center" }}>
-            {/* <View
-              style={{
-                flexDirection: "column",
-
-                alignItems: "center",
-                justifyContent: "center",
-                alignSelf: "center",
-              }}
-            > */}
             <Ionicons name="checkmark-circle-sharp" size={48} color="green" />
-            {/* <Text style={{ textAlign: "center", fontFamily: "bold" }}>
-                Password Reset Successful
-              </Text>
-            </View> */}
           </Dialog.Title>
           <Dialog.Content>
             <Text
@@ -313,7 +300,6 @@ export default function ResetPassword({ navigation }) {
         {passwordInputVisible ? (
           <View style={styles.inputView}>
             <TextInput
-              // mode="outlined"
               label={
                 <Text
                   style={{
@@ -327,7 +313,6 @@ export default function ResetPassword({ navigation }) {
               }
               secureTextEntry
               style={styles.inputText}
-              // placeholder="Password"
               activeUnderlineColor="#40cbc3"
               underlineColor="black"
               cursorColor="black"

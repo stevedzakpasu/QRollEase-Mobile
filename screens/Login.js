@@ -158,7 +158,6 @@ export default function Login({ navigation }) {
         </View>
         <View style={styles.inputView}>
           <TextInput
-            // mode="outlined"
             label={
               <Text
                 style={{ fontFamily: "semibold", color: "black", fontSize: 14 }}

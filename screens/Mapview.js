@@ -125,7 +125,6 @@ export default function Mapview({ navigation, route }) {
           cursorColor="black"
           onChangeText={(text) => setLectureDescription(text)}
           contentStyle={{ fontFamily: "medium", color: "black" }}
-          // onChangeText={(text) => setEmail(text)}
         />
         <TextInput
           label={
@@ -184,14 +183,6 @@ export default function Mapview({ navigation, route }) {
                 longitude: location.coords.longitude,
               }}
             />
-            {/* <Circle
-            center={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            }}
-            radius={location.coords.accuracy} // Adjust the radius as needed
-            fillColor="rgba(34, 107, 235, 0.25)"
-          /> */}
           </MapView>
         </View>
         <View style={{ flex: 0.5 }}>
@@ -294,7 +285,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    // justifyContent: "space-between",
     padding: 16,
     backgroundColor: "#f0f0f0",
   },
@@ -303,7 +293,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    // justifyContent: "space-between",
     alignContent: "center",
     alignItems: "center",
     width: "100%",

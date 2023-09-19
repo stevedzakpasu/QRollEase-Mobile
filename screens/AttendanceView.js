@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  ToastAndroid,
 } from "react-native";
 import { DataTable } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -120,14 +121,6 @@ export default function AttendanceView({ route, navigation }) {
             Total Attendees: {attendance.length}
           </Text>
           <DataTable>
-            {/* <DataTable.Header>
-              <DataTable.Title
-                // style={{ borderBottomWidth: 1 }}
-                textStyle={{ fontFamily: "bold", color: "black" }}
-              >
-                Student ID
-              </DataTable.Title>
-            </DataTable.Header> */}
             {attendance.map((item) => (
               <DataTable.Row
                 key={item.student_id}

@@ -285,9 +285,6 @@ export default function CourseDetails({ route, navigation }) {
                         {
                           width: 200,
                           height: 200,
-                          // alignSelf: "center",
-                          // flex: 1,
-                          // marginVertical: 5,
                         },
                       ]} // Add width and height style here
                       source={require("../assets/images/no-results.png")}
@@ -341,7 +338,6 @@ export default function CourseDetails({ route, navigation }) {
               backgroundColor: "white",
               justifyContent: "space-between",
               alignItems: "center",
-              // paddingVertical: 24,
             }}
           >
             <Dialog.Title style={{ alignSelf: "center" }}>
@@ -388,7 +384,6 @@ export default function CourseDetails({ route, navigation }) {
                   cursorColor="black"
                   onChangeText={(text) => setLectureDescription(text)}
                   contentStyle={{ fontFamily: "medium", color: "black" }}
-                  // onChangeText={(text) => setEmail(text)}
                 />
               </View>
 
@@ -424,7 +419,6 @@ export default function CourseDetails({ route, navigation }) {
                   cursorColor="black"
                   onChangeText={(text) => setLectureLocation(text)}
                   contentStyle={{ fontFamily: "medium", color: "black" }}
-                  // onChangeText={(text) => setEmail(text)}
                 />
               </View>
             </Dialog.Content>
@@ -488,7 +482,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    // flex: 1,
     resizeMode: "contain",
   },
   createBtn: {
@@ -504,7 +497,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    // justifyContent: "space-between",
     alignContent: "center",
     alignItems: "center",
     width: "100%",

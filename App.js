@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useMemo } from "react";
-import { View } from "react-native";
+import { View, StatusBar } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { NavigationContainer } from "@react-navigation/native";
@@ -10,7 +10,6 @@ import { saveLocally, getLocalValueFor } from "./hooks/LocalStorage";
 import { AppContext } from "./context/AppContext";
 import Loading from "./screens/Loading";
 import * as Location from "expo-location";
-import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 export default function App() {
   const [attendance, setAttendance] = useState([]);
@@ -118,6 +117,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    StatusBar.setBarStyle("dark-content");
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       const access_token = await getValueFor("access_token");
       const email = await getValueFor("email");
@@ -193,19 +196,16 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1, marginTop: Constants.statusBarHeight }}>
-      <StatusBar barStyle="dark-content" />
-      <NavigationContainer onReady={onLayoutRootView}>
-        <AppContext.Provider value={contextValue}>
-          {token && !userInfo && <Loading />}
+    <NavigationContainer onReady={onLayoutRootView}>
+      <AppContext.Provider value={contextValue}>
+        {token && !userInfo && <Loading />}
 
-          {token && userInfo && userInfo.is_verified && <BottomTabs />}
+        {token && userInfo && userInfo.is_verified && <BottomTabs />}
 
-          {token && userInfo && !userInfo.is_verified && <UnverifiedStack />}
+        {token && userInfo && !userInfo.is_verified && <UnverifiedStack />}
 
-          {!token && <UnauthenticatedStack />}
-        </AppContext.Provider>
-      </NavigationContainer>
-    </View>
+        {!token && <UnauthenticatedStack />}
+      </AppContext.Provider>
+    </NavigationContainer>
   );
 }

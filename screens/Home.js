@@ -261,12 +261,9 @@ export default function Home({ navigation }) {
         <View style={styles.header}>
           <TextInput
             style={{
-              // marginLeft: 25,
               fontFamily: "regular",
               width: "95%",
               backgroundColor: "#f0f0f0",
-              // height: "100%",
-              // backgroundColor: "white",
             }}
             placeholder="Search courses..."
             value={searchQuery}
@@ -327,9 +324,6 @@ export default function Home({ navigation }) {
                           {
                             width: 200,
                             height: 200,
-                            // alignSelf: "center",
-                            // flex: 1,
-                            // marginVertical: 5,
                           },
                         ]} // Add width and height style here
                         source={require("../assets/images/no-results.png")}
@@ -387,19 +381,12 @@ export default function Home({ navigation }) {
             backgroundColor: "white",
             justifyContent: "space-between",
             alignItems: "center",
-            // paddingVertical: 24,
           }}
         >
           <Dialog.Title style={{ alignSelf: "center" }}>
-            {/* <View
-              style={{
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            > */}
-            {/* <Ionicons name="create" size={48} color="black" /> */}
-            <Text style={{ fontFamily: "semibold" }}>New Course</Text>
-            {/* </View> */}
+            <Text style={{ fontFamily: "semibold", color: "black" }}>
+              New Course
+            </Text>
           </Dialog.Title>
           <Dialog.Content>
             <View
@@ -430,7 +417,6 @@ export default function Home({ navigation }) {
                 cursorColor="black"
                 onChangeText={(text) => setCourseCode(text)}
                 contentStyle={{ fontFamily: "medium", color: "black" }}
-                // onChangeText={(text) => setEmail(text)}
               />
             </View>
 
@@ -557,7 +543,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontFamily: "bold",
-    // marginBottom: 15,
   },
   searchBar: {
     height: 30,
@@ -577,11 +562,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#f0f0f0",
   },
-  iconContainer: {
-    // position: "absolute",
-    // right: 2,
-    // top: 1,
-  },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",

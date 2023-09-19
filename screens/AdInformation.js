@@ -16,7 +16,7 @@ import {
   TextInput,
 } from "react-native-paper";
 import axios from "axios";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import { AppContext } from "../context/AppContext";
 import { removeItem } from "../hooks/SecureStore";
 import { removeLocalValueFor } from "../hooks/LocalStorage";
@@ -30,7 +30,6 @@ export default function AdInformation({ navigation }) {
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
 
   const showSuccessDialog = () => setIsSuccessDialogVisible(true);
 
@@ -40,11 +39,7 @@ export default function AdInformation({ navigation }) {
 
   const hideErrorDialog = () => setIsErrorDialogVisible(false);
 
-  const showDialog = () => setIsDialogVisible(true);
-
   const showModal = () => setIsModalVisible(true);
-
-  const hideDialog = () => setIsDialogVisible(false);
 
   const hideModal = () => setIsModalVisible(false);
 
@@ -76,7 +71,6 @@ export default function AdInformation({ navigation }) {
       user_id: userInfo.id,
     },
   };
-  const isInputValid = () => identity !== "" && department !== "";
 
   const handleCreateIdentity = async () => {
     showModal();
@@ -116,22 +110,7 @@ export default function AdInformation({ navigation }) {
             alignItems: "center",
           }}
         >
-          <Dialog.Title style={{ alignSelf: "center" }}>
-            {/* <View
-              style={{
-                flexDirection: "column",
-
-                alignItems: "center",
-                justifyContent: "center",
-                alignSelf: "center",
-              }}
-            > */}
-            {/* <Ionicons name="checkmark-circle-sharp" size={48} color="green" /> */}
-            {/* <Text style={{ textAlign: "center", fontFamily: "bold" }}>
-                All done!
-              </Text> */}
-            {/* </View> */}
-          </Dialog.Title>
+          <Dialog.Title style={{ alignSelf: "center" }}></Dialog.Title>
           <Dialog.Content>
             <Text
               style={{ textAlign: "left", fontFamily: "bold" }}

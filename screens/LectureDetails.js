@@ -13,7 +13,7 @@ import {
 import QRCode from "react-native-qrcode-svg";
 import { AppContext } from "../context/AppContext";
 import CryptoJS from "crypto-js";
-import MapView, { PROVIDER_GOOGLE, Marker, Circle } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import axios from "axios";
 import { Entypo } from "@expo/vector-icons";
 import {
@@ -23,15 +23,13 @@ import {
   PaperProvider,
   Portal,
 } from "react-native-paper";
-import { Foundation } from "@expo/vector-icons";
+
 export default function LectureDetails({ route, navigation }) {
   const [QR, setQR] = useState("");
   const { lectureItem } = route.params;
   const { lecturesData, location, userInfo, token } = useContext(AppContext);
   const [sessionEnded, setSessionEnded] = useState(!lectureItem.is_active);
-  // const [lectureInfo, setLectureInfo] = useState(
-  //   lecturesData[lectureItem.course_code].find((lecture) => lecture.id === 1)
-  // );
+
   const containerStyle = {
     backgroundColor: "white",
     padding: 20,
@@ -164,17 +162,7 @@ export default function LectureDetails({ route, navigation }) {
             {lectureItem.lecture_location}
           </Text>
         </Text>
-        {/* <TouchableOpacity
-        style={{
-          position: "absolute", // Required for positioning
-          zIndex: 1,
-          bottom: 55,
-          right: 15,
-        }}
-        // onPress={showDialog}
-      >
-        <Ionicons name="md-add-circle-sharp" size={48} color="black" />
-      </TouchableOpacity> */}
+
         <View style={{ flex: 1, marginVertical: 15 }}>
           <MapView
             style={styles.map}
@@ -198,14 +186,6 @@ export default function LectureDetails({ route, navigation }) {
                 longitude: lectureItem.longitude,
               }}
             />
-            {/* <Circle
-            center={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            }}
-            radius={location.coords.accuracy} // Adjust the radius as needed
-            fillColor="rgba(34, 107, 235, 0.25)"
-          /> */}
           </MapView>
         </View>
 
@@ -386,7 +366,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    // justifyContent: "space-between",
     alignContent: "center",
     alignItems: "center",
     width: "100%",
